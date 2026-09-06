@@ -904,8 +904,8 @@
     </div>
     <div class="custom-club-fields" id="t1-custom" style="display:none;">
       <div class="input-group">
-        <label>Custom name (scoreboard, max 5)</label>
-        <input type="text" id="t1-name" value="PSG" maxlength="5">
+        <label>Custom name (scoreboard, max 3)</label>
+        <input type="text" id="t1-name" value="PSG" maxlength="3">
       </div>
       <div class="input-group">
         <label>Custom logo</label>
@@ -929,8 +929,8 @@
     </div>
     <div class="custom-club-fields" id="t2-custom" style="display:none;">
       <div class="input-group">
-        <label>Custom name (scoreboard, max 5)</label>
-        <input type="text" id="t2-name" value="INT" maxlength="5">
+        <label>Custom name (scoreboard, max 3)</label>
+        <input type="text" id="t2-name" value="INT" maxlength="3">
       </div>
       <div class="input-group">
         <label>Custom logo</label>
@@ -1235,9 +1235,10 @@
 
   // Teams Default configuration
   const TEAMS = [
-    { color: '#00f3ff', label: 'PSG', fullName: 'Paris Saint-Germain', id: 'team1', img: new Image(), imgLoaded: false, logoDraw: null, clubId: null, logoSrc: null },
-    { color: '#ff003c', label: 'INT', fullName: 'Inter', id: 'team2', img: new Image(), imgLoaded: false, logoDraw: null, clubId: null, logoSrc: null }
+    { color: '#00f3ff', label: 'PSG', fullName: 'Paris Saint-Germain', id: 'team1', img: new Image(), imgLoaded: false, logoDraw: null, clubId: null, logoSrc: null, league: null },
+    { color: '#ff003c', label: 'INT', fullName: 'Inter', id: 'team2', img: new Image(), imgLoaded: false, logoDraw: null, clubId: null, logoSrc: null, league: null }
   ];
+  let activeCompetition = null; // from Fixtures "Use teams" (UCL, EPL, …)
 
   let clubsCatalog = { clubs: [], leagues: [] };
 
@@ -1447,7 +1448,8 @@
 
     if (isCustom) {
       TEAMS[teamIndex].clubId = null;
-      TEAMS[teamIndex].label = (nameEl.value || `T${teamIndex + 1}`).slice(0, 5).toUpperCase();
+      TEAMS[teamIndex].league = null;
+      TEAMS[teamIndex].label = (nameEl.value || `T${teamIndex + 1}`).slice(0, 3).toUpperCase();
       TEAMS[teamIndex].fullName = nameEl.value || TEAMS[teamIndex].label;
       TEAMS[teamIndex].color = colorEl.value;
       return;
@@ -1456,7 +1458,8 @@
     const club = (clubsCatalog.clubs || []).find((c) => c.id === value);
     if (!club) return;
     TEAMS[teamIndex].clubId = club.id;
-    TEAMS[teamIndex].label = String(club.short || club.name).slice(0, 5).toUpperCase();
+    TEAMS[teamIndex].league = club.league || club.leagueId || null;
+    TEAMS[teamIndex].label = String(club.short || club.name).slice(0, 3).toUpperCase();
     TEAMS[teamIndex].fullName = club.name;
     // Only push club default into the picker when the club changes — never overwrite a user color on Start
     if (syncColor) {
@@ -1492,9 +1495,11 @@
   }
 
   t1ClubEl.addEventListener('change', () => {
+    activeCompetition = null;
     applyClubSelection(0, { syncColor: true }).then(() => draw());
   });
   t2ClubEl.addEventListener('change', () => {
+    activeCompetition = null;
     applyClubSelection(1, { syncColor: true }).then(() => draw());
   });
   document.getElementById('t1-color').addEventListener('input', () => {
@@ -1507,13 +1512,13 @@
   });
   document.getElementById('t1-name').addEventListener('input', () => {
     if (t1ClubEl.value === '__custom__') {
-      TEAMS[0].label = (document.getElementById('t1-name').value || 'T1').slice(0, 5).toUpperCase();
+      TEAMS[0].label = (document.getElementById('t1-name').value || 'T1').slice(0, 3).toUpperCase();
       TEAMS[0].fullName = document.getElementById('t1-name').value || TEAMS[0].label;
     }
   });
   document.getElementById('t2-name').addEventListener('input', () => {
     if (t2ClubEl.value === '__custom__') {
-      TEAMS[1].label = (document.getElementById('t2-name').value || 'T2').slice(0, 5).toUpperCase();
+      TEAMS[1].label = (document.getElementById('t2-name').value || 'T2').slice(0, 3).toUpperCase();
       TEAMS[1].fullName = document.getElementById('t2-name').value || TEAMS[1].label;
     }
   });
@@ -1536,11 +1541,11 @@
     TEAMS[0].color = document.getElementById('t1-color').value;
     TEAMS[1].color = document.getElementById('t2-color').value;
     if (t1ClubEl.value === '__custom__') {
-      TEAMS[0].label = (document.getElementById('t1-name').value || 'T1').slice(0, 5).toUpperCase();
+      TEAMS[0].label = (document.getElementById('t1-name').value || 'T1').slice(0, 3).toUpperCase();
       TEAMS[0].fullName = document.getElementById('t1-name').value || TEAMS[0].label;
     }
     if (t2ClubEl.value === '__custom__') {
-      TEAMS[1].label = (document.getElementById('t2-name').value || 'T2').slice(0, 5).toUpperCase();
+      TEAMS[1].label = (document.getElementById('t2-name').value || 'T2').slice(0, 3).toUpperCase();
       TEAMS[1].fullName = document.getElementById('t2-name').value || TEAMS[1].label;
     }
   }
@@ -2479,6 +2484,9 @@
     form.append('team2Name', TEAMS[1].fullName || TEAMS[1].label);
     form.append('score1', String(scoreTeam1));
     form.append('score2', String(scoreTeam2));
+    if (activeCompetition) form.append('league', activeCompetition);
+    if (TEAMS[0].league) form.append('team1League', TEAMS[0].league);
+    if (TEAMS[1].league) form.append('team2League', TEAMS[1].league);
     form.append('music', musicName || 'none');
     if (publishAtIso) form.append('publishAt', publishAtIso);
     form.append('publishYoutube', pubYoutubeEl.checked ? 'true' : 'false');
@@ -2786,19 +2794,20 @@
   }
 
   async function useFixtureTeams(match) {
+    activeCompetition = match.league || match.leagueName || null;
     const home = findClubByName(match.home);
     const away = findClubByName(match.away);
     if (home) {
       t1ClubEl.value = home.id;
     } else {
       t1ClubEl.value = '__custom__';
-      document.getElementById('t1-name').value = (match.home || 'HOME').slice(0, 5).toUpperCase();
+      document.getElementById('t1-name').value = (match.home || 'HOME').slice(0, 3).toUpperCase();
     }
     if (away) {
       t2ClubEl.value = away.id;
     } else {
       t2ClubEl.value = '__custom__';
-      document.getElementById('t2-name').value = (match.away || 'AWAY').slice(0, 5).toUpperCase();
+      document.getElementById('t2-name').value = (match.away || 'AWAY').slice(0, 3).toUpperCase();
     }
     await Promise.all([
       applyClubSelection(0, { syncColor: true }),
@@ -2807,12 +2816,12 @@
     if (!home) {
       document.getElementById('t1-name').value = match.home || 'HOME';
       TEAMS[0].fullName = match.home || 'HOME';
-      TEAMS[0].label = (match.home || 'HOME').slice(0, 5).toUpperCase();
+      TEAMS[0].label = (match.home || 'HOME').slice(0, 3).toUpperCase();
     }
     if (!away) {
       document.getElementById('t2-name').value = match.away || 'AWAY';
       TEAMS[1].fullName = match.away || 'AWAY';
-      TEAMS[1].label = (match.away || 'AWAY').slice(0, 5).toUpperCase();
+      TEAMS[1].label = (match.away || 'AWAY').slice(0, 3).toUpperCase();
     }
     draw();
     setSetupTab('setup');
@@ -3509,6 +3518,10 @@
     ctx.stroke();
   }
 
+  function scoreboardLabel(team) {
+    return String(team?.label || '').slice(0, 3).toUpperCase();
+  }
+
   function drawUI() {
     ctx.save();
 
@@ -3517,7 +3530,8 @@
     const sbX = CENTER_X - sbWidth / 2;
     const sbY = 170;
     const midY = sbY + sbHeight / 2;
-    const crestSize = 88;
+    const crestSize = 72;
+    const crestGap = 22; // padding between crest edge and name
 
     // Light glass scoreboard (readable for dark club crests)
     ctx.shadowColor = 'rgba(0,0,0,0.35)';
@@ -3548,19 +3562,20 @@
     ctx.roundRect(sbX + sbWidth - 18, sbY + 18, 8, sbHeight - 36, 4);
     ctx.fill();
 
-    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Team 1 crest + name
-    drawScoreboardCrest(TEAMS[0], sbX + 78, midY, crestSize);
+    // Team 1: crest → gap → 3-letter name → score
+    const crest1X = sbX + 28 + crestSize / 2;
+    const name1X = crest1X + crestSize / 2 + crestGap;
+    drawScoreboardCrest(TEAMS[0], crest1X, midY, crestSize);
+    ctx.textAlign = 'left';
     ctx.fillStyle = '#0f172a';
-    ctx.font = '900 36px Inter, system-ui, sans-serif';
-    ctx.fillText(TEAMS[0].label, sbX + 168, midY);
+    ctx.font = '900 34px Inter, system-ui, sans-serif';
+    ctx.fillText(scoreboardLabel(TEAMS[0]), name1X, midY);
 
-    // Team 1 score
-    ctx.fillStyle = '#0f172a';
-    ctx.font = '900 72px Inter, system-ui, sans-serif';
-    ctx.fillText(scoreTeam1, sbX + 290, midY);
+    ctx.textAlign = 'center';
+    ctx.font = '900 70px Inter, system-ui, sans-serif';
+    ctx.fillText(scoreTeam1, sbX + 300, midY);
 
     // Center timer pill
     const timeStr = Math.floor(simTime).toString().padStart(2, '0') + "'";
@@ -3574,16 +3589,17 @@
     ctx.font = '700 34px Inter, system-ui, sans-serif';
     ctx.fillText(timeStr, CENTER_X, midY);
 
-    // Team 2 score
+    // Team 2 score → 3-letter name → gap → crest
     ctx.fillStyle = '#0f172a';
-    ctx.font = '900 72px Inter, system-ui, sans-serif';
-    ctx.fillText(scoreTeam2, sbX + sbWidth - 290, midY);
+    ctx.font = '900 70px Inter, system-ui, sans-serif';
+    ctx.fillText(scoreTeam2, sbX + sbWidth - 300, midY);
 
-    // Team 2 name + crest
-    ctx.fillStyle = '#0f172a';
-    ctx.font = '900 36px Inter, system-ui, sans-serif';
-    ctx.fillText(TEAMS[1].label, sbX + sbWidth - 168, midY);
-    drawScoreboardCrest(TEAMS[1], sbX + sbWidth - 78, midY, crestSize);
+    const crest2X = sbX + sbWidth - 28 - crestSize / 2;
+    const name2X = crest2X - crestSize / 2 - crestGap;
+    ctx.textAlign = 'right';
+    ctx.font = '900 34px Inter, system-ui, sans-serif';
+    ctx.fillText(scoreboardLabel(TEAMS[1]), name2X, midY);
+    drawScoreboardCrest(TEAMS[1], crest2X, midY, crestSize);
 
     ctx.restore();
   }
