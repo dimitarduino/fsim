@@ -1,0 +1,6 @@
+node_modules/
+.env
+.env.local
+recordings/
+data/
+.DS_Store

@@ -1,0 +1,1669 @@
+{
+  "updatedAt": "2026-09-06T09:25:34.504Z",
+  "source": "https://github.com/luukhopman/football-logos",
+  "count": 180,
+  "leagues": [
+    {
+      "id": "premier-league",
+      "name": "EPL"
+    },
+    {
+      "id": "la-liga",
+      "name": "La Liga"
+    },
+    {
+      "id": "serie-a",
+      "name": "Serie A"
+    },
+    {
+      "id": "bundesliga",
+      "name": "Bundesliga"
+    },
+    {
+      "id": "ligue-1",
+      "name": "Ligue 1"
+    },
+    {
+      "id": "eredivisie",
+      "name": "Eredivisie"
+    },
+    {
+      "id": "primeira-liga",
+      "name": "Primeira Liga"
+    },
+    {
+      "id": "super-lig",
+      "name": "Süper Lig"
+    },
+    {
+      "id": "belgian-pro",
+      "name": "Pro League"
+    },
+    {
+      "id": "scottish-prem",
+      "name": "SPL"
+    }
+  ],
+  "clubs": [
+    {
+      "id": "bundesliga-1-fc-koln",
+      "name": "1.FC Köln",
+      "short": "1FKL",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#4d0dd9",
+      "logo": "/clubs/bundesliga-1-fc-koln.png"
+    },
+    {
+      "id": "bundesliga-1-fc-union-berlin",
+      "name": "1.FC Union Berlin",
+      "short": "1FUB",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#df4126",
+      "logo": "/clubs/bundesliga-1-fc-union-berlin.png"
+    },
+    {
+      "id": "bundesliga-1-fsv-mainz-05",
+      "name": "1.FSV Mainz 05",
+      "short": "1FM0",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#08f768",
+      "logo": "/clubs/bundesliga-1-fsv-mainz-05.png"
+    },
+    {
+      "id": "bundesliga-bayer-04-leverkusen",
+      "name": "Bayer 04 Leverkusen",
+      "short": "B0L",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#e32221",
+      "logo": "/clubs/bundesliga-bayer-04-leverkusen.png"
+    },
+    {
+      "id": "bundesliga-bayern-munich",
+      "name": "Bayern Munich",
+      "short": "BAY",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#dc052d",
+      "logo": "/clubs/bundesliga-bayern-munich.png"
+    },
+    {
+      "id": "bundesliga-borussia-dortmund",
+      "name": "Borussia Dortmund",
+      "short": "BVB",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#fde100",
+      "logo": "/clubs/bundesliga-borussia-dortmund.png"
+    },
+    {
+      "id": "bundesliga-borussia-monchengladbach",
+      "name": "Borussia Mönchengladbach",
+      "short": "BMN",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#1a1ee0",
+      "logo": "/clubs/bundesliga-borussia-monchengladbach.png"
+    },
+    {
+      "id": "bundesliga-eintracht-frankfurt",
+      "name": "Eintracht Frankfurt",
+      "short": "SGE",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#e1000f",
+      "logo": "/clubs/bundesliga-eintracht-frankfurt.png"
+    },
+    {
+      "id": "bundesliga-fc-augsburg",
+      "name": "FC Augsburg",
+      "short": "FA",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#5132dc",
+      "logo": "/clubs/bundesliga-fc-augsburg.png"
+    },
+    {
+      "id": "bundesliga-fc-schalke-04",
+      "name": "FC Schalke 04",
+      "short": "FS0",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#e32d26",
+      "logo": "/clubs/bundesliga-fc-schalke-04.png"
+    },
+    {
+      "id": "bundesliga-hamburger-sv",
+      "name": "Hamburger SV",
+      "short": "HS",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#209fe9",
+      "logo": "/clubs/bundesliga-hamburger-sv.png"
+    },
+    {
+      "id": "bundesliga-rb-leipzig",
+      "name": "RB Leipzig",
+      "short": "RBL",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#dd0741",
+      "logo": "/clubs/bundesliga-rb-leipzig.png"
+    },
+    {
+      "id": "bundesliga-sc-freiburg",
+      "name": "SC Freiburg",
+      "short": "SF",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#87e916",
+      "logo": "/clubs/bundesliga-sc-freiburg.png"
+    },
+    {
+      "id": "bundesliga-sc-paderborn-07",
+      "name": "SC Paderborn 07",
+      "short": "SP0",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#e325f8",
+      "logo": "/clubs/bundesliga-sc-paderborn-07.png"
+    },
+    {
+      "id": "bundesliga-sv-07-elversberg",
+      "name": "SV 07 Elversberg",
+      "short": "S0E",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#1665f8",
+      "logo": "/clubs/bundesliga-sv-07-elversberg.png"
+    },
+    {
+      "id": "bundesliga-sv-werder-bremen",
+      "name": "SV Werder Bremen",
+      "short": "SWB",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#6be713",
+      "logo": "/clubs/bundesliga-sv-werder-bremen.png"
+    },
+    {
+      "id": "bundesliga-tsg-1899-hoffenheim",
+      "name": "TSG 1899 Hoffenheim",
+      "short": "T1H",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#6415cb",
+      "logo": "/clubs/bundesliga-tsg-1899-hoffenheim.png"
+    },
+    {
+      "id": "bundesliga-vfb-stuttgart",
+      "name": "VfB Stuttgart",
+      "short": "VS",
+      "league": "Bundesliga",
+      "leagueId": "bundesliga",
+      "color": "#1fc125",
+      "logo": "/clubs/bundesliga-vfb-stuttgart.png"
+    },
+    {
+      "id": "premier-league-afc-bournemouth",
+      "name": "AFC Bournemouth",
+      "short": "BOU",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#da291c",
+      "logo": "/clubs/premier-league-afc-bournemouth.png"
+    },
+    {
+      "id": "premier-league-arsenal-fc",
+      "name": "Arsenal FC",
+      "short": "ARS",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#ef0107",
+      "logo": "/clubs/premier-league-arsenal-fc.png"
+    },
+    {
+      "id": "premier-league-aston-villa",
+      "name": "Aston Villa",
+      "short": "AVL",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#95bfe5",
+      "logo": "/clubs/premier-league-aston-villa.png"
+    },
+    {
+      "id": "premier-league-brentford-fc",
+      "name": "Brentford FC",
+      "short": "BRE",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#e30613",
+      "logo": "/clubs/premier-league-brentford-fc.png"
+    },
+    {
+      "id": "premier-league-brighton-hove-albion",
+      "name": "Brighton & Hove Albion",
+      "short": "BHA",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#0057b8",
+      "logo": "/clubs/premier-league-brighton-hove-albion.png"
+    },
+    {
+      "id": "premier-league-chelsea-fc",
+      "name": "Chelsea FC",
+      "short": "CHE",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#034694",
+      "logo": "/clubs/premier-league-chelsea-fc.png"
+    },
+    {
+      "id": "premier-league-coventry-city",
+      "name": "Coventry City",
+      "short": "CC",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#c32230",
+      "logo": "/clubs/premier-league-coventry-city.png"
+    },
+    {
+      "id": "premier-league-crystal-palace",
+      "name": "Crystal Palace",
+      "short": "CRY",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#1b458f",
+      "logo": "/clubs/premier-league-crystal-palace.png"
+    },
+    {
+      "id": "premier-league-everton-fc",
+      "name": "Everton FC",
+      "short": "EVE",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#003399",
+      "logo": "/clubs/premier-league-everton-fc.png"
+    },
+    {
+      "id": "premier-league-fulham-fc",
+      "name": "Fulham FC",
+      "short": "FUL",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#ffffff",
+      "logo": "/clubs/premier-league-fulham-fc.png"
+    },
+    {
+      "id": "premier-league-hull-city",
+      "name": "Hull City",
+      "short": "HC",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#9cef2e",
+      "logo": "/clubs/premier-league-hull-city.png"
+    },
+    {
+      "id": "premier-league-ipswich-town",
+      "name": "Ipswich Town",
+      "short": "IPS",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#31e8f2",
+      "logo": "/clubs/premier-league-ipswich-town.png"
+    },
+    {
+      "id": "premier-league-leeds-united",
+      "name": "Leeds United",
+      "short": "LEE",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#870af5",
+      "logo": "/clubs/premier-league-leeds-united.png"
+    },
+    {
+      "id": "premier-league-liverpool-fc",
+      "name": "Liverpool FC",
+      "short": "LIV",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#c8102e",
+      "logo": "/clubs/premier-league-liverpool-fc.png"
+    },
+    {
+      "id": "premier-league-manchester-city",
+      "name": "Manchester City",
+      "short": "MCI",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#6cabdd",
+      "logo": "/clubs/premier-league-manchester-city.png"
+    },
+    {
+      "id": "premier-league-manchester-united",
+      "name": "Manchester United",
+      "short": "MUN",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#da291c",
+      "logo": "/clubs/premier-league-manchester-united.png"
+    },
+    {
+      "id": "premier-league-newcastle-united",
+      "name": "Newcastle United",
+      "short": "NEW",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#241f20",
+      "logo": "/clubs/premier-league-newcastle-united.png"
+    },
+    {
+      "id": "premier-league-nottingham-forest",
+      "name": "Nottingham Forest",
+      "short": "NFO",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#e53233",
+      "logo": "/clubs/premier-league-nottingham-forest.png"
+    },
+    {
+      "id": "premier-league-sunderland-afc",
+      "name": "Sunderland AFC",
+      "short": "SA",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#2fceee",
+      "logo": "/clubs/premier-league-sunderland-afc.png"
+    },
+    {
+      "id": "premier-league-tottenham-hotspur",
+      "name": "Tottenham Hotspur",
+      "short": "TOT",
+      "league": "EPL",
+      "leagueId": "premier-league",
+      "color": "#132257",
+      "logo": "/clubs/premier-league-tottenham-hotspur.png"
+    },
+    {
+      "id": "eredivisie-ado-den-haag",
+      "name": "ADO Den Haag",
+      "short": "ADH",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#4a20d5",
+      "logo": "/clubs/eredivisie-ado-den-haag.png"
+    },
+    {
+      "id": "eredivisie-ajax-amsterdam",
+      "name": "Ajax Amsterdam",
+      "short": "AJX",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#d2122e",
+      "logo": "/clubs/eredivisie-ajax-amsterdam.png"
+    },
+    {
+      "id": "eredivisie-az-alkmaar",
+      "name": "AZ Alkmaar",
+      "short": "AA",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#29f5c5",
+      "logo": "/clubs/eredivisie-az-alkmaar.png"
+    },
+    {
+      "id": "eredivisie-excelsior-rotterdam",
+      "name": "Excelsior Rotterdam",
+      "short": "ER",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#1fb8d6",
+      "logo": "/clubs/eredivisie-excelsior-rotterdam.png"
+    },
+    {
+      "id": "eredivisie-fc-groningen",
+      "name": "FC Groningen",
+      "short": "FG",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#f67328",
+      "logo": "/clubs/eredivisie-fc-groningen.png"
+    },
+    {
+      "id": "eredivisie-fc-twente-enschede",
+      "name": "FC Twente Enschede",
+      "short": "FTE",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#1dddb3",
+      "logo": "/clubs/eredivisie-fc-twente-enschede.png"
+    },
+    {
+      "id": "eredivisie-fc-utrecht",
+      "name": "FC Utrecht",
+      "short": "FU",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#e74323",
+      "logo": "/clubs/eredivisie-fc-utrecht.png"
+    },
+    {
+      "id": "eredivisie-feyenoord-rotterdam",
+      "name": "Feyenoord Rotterdam",
+      "short": "FEY",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#ff1e00",
+      "logo": "/clubs/eredivisie-feyenoord-rotterdam.png"
+    },
+    {
+      "id": "eredivisie-fortuna-sittard",
+      "name": "Fortuna Sittard",
+      "short": "FS",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#e7c623",
+      "logo": "/clubs/eredivisie-fortuna-sittard.png"
+    },
+    {
+      "id": "eredivisie-go-ahead-eagles",
+      "name": "Go Ahead Eagles",
+      "short": "GAE",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#1b21da",
+      "logo": "/clubs/eredivisie-go-ahead-eagles.png"
+    },
+    {
+      "id": "eredivisie-nec-nijmegen",
+      "name": "NEC Nijmegen",
+      "short": "NN",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#f88920",
+      "logo": "/clubs/eredivisie-nec-nijmegen.png"
+    },
+    {
+      "id": "eredivisie-pec-zwolle",
+      "name": "PEC Zwolle",
+      "short": "PZ",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#0b50e5",
+      "logo": "/clubs/eredivisie-pec-zwolle.png"
+    },
+    {
+      "id": "eredivisie-psv-eindhoven",
+      "name": "PSV Eindhoven",
+      "short": "PSV",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#ed1c24",
+      "logo": "/clubs/eredivisie-psv-eindhoven.png"
+    },
+    {
+      "id": "eredivisie-sc-cambuur-leeuwarden",
+      "name": "SC Cambuur Leeuwarden",
+      "short": "SCL",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#f1329b",
+      "logo": "/clubs/eredivisie-sc-cambuur-leeuwarden.png"
+    },
+    {
+      "id": "eredivisie-sc-heerenveen",
+      "name": "SC Heerenveen",
+      "short": "SH",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#6428e6",
+      "logo": "/clubs/eredivisie-sc-heerenveen.png"
+    },
+    {
+      "id": "eredivisie-sc-telstar",
+      "name": "SC Telstar",
+      "short": "ST",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#ee3b2b",
+      "logo": "/clubs/eredivisie-sc-telstar.png"
+    },
+    {
+      "id": "eredivisie-sparta-rotterdam",
+      "name": "Sparta Rotterdam",
+      "short": "SR",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#1ac11d",
+      "logo": "/clubs/eredivisie-sparta-rotterdam.png"
+    },
+    {
+      "id": "eredivisie-willem-ii-tilburg",
+      "name": "Willem II Tilburg",
+      "short": "WIT",
+      "league": "Eredivisie",
+      "leagueId": "eredivisie",
+      "color": "#d41c25",
+      "logo": "/clubs/eredivisie-willem-ii-tilburg.png"
+    },
+    {
+      "id": "la-liga-athletic-bilbao",
+      "name": "Athletic Bilbao",
+      "short": "AB",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#ee2523",
+      "logo": "/clubs/la-liga-athletic-bilbao.png"
+    },
+    {
+      "id": "la-liga-atletico-de-madrid",
+      "name": "Atlético de Madrid",
+      "short": "ATDM",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#cb3524",
+      "logo": "/clubs/la-liga-atletico-de-madrid.png"
+    },
+    {
+      "id": "la-liga-ca-osasuna",
+      "name": "CA Osasuna",
+      "short": "CO",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#cdc00a",
+      "logo": "/clubs/la-liga-ca-osasuna.png"
+    },
+    {
+      "id": "la-liga-celta-de-vigo",
+      "name": "Celta de Vigo",
+      "short": "CDV",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#1dbfa1",
+      "logo": "/clubs/la-liga-celta-de-vigo.png"
+    },
+    {
+      "id": "la-liga-deportivo-a-coruna",
+      "name": "Deportivo A Coruña",
+      "short": "DACA",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#a92cf2",
+      "logo": "/clubs/la-liga-deportivo-a-coruna.png"
+    },
+    {
+      "id": "la-liga-deportivo-alaves",
+      "name": "Deportivo Alavés",
+      "short": "DAS",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#68f019",
+      "logo": "/clubs/la-liga-deportivo-alaves.png"
+    },
+    {
+      "id": "la-liga-elche-cf",
+      "name": "Elche CF",
+      "short": "EC",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#d4e821",
+      "logo": "/clubs/la-liga-elche-cf.png"
+    },
+    {
+      "id": "la-liga-fc-barcelona",
+      "name": "FC Barcelona",
+      "short": "BAR",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#a50044",
+      "logo": "/clubs/la-liga-fc-barcelona.png"
+    },
+    {
+      "id": "la-liga-getafe-cf",
+      "name": "Getafe CF",
+      "short": "GC",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#d328dc",
+      "logo": "/clubs/la-liga-getafe-cf.png"
+    },
+    {
+      "id": "la-liga-levante-ud",
+      "name": "Levante UD",
+      "short": "LU",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#e41607",
+      "logo": "/clubs/la-liga-levante-ud.png"
+    },
+    {
+      "id": "la-liga-malaga-cf",
+      "name": "Málaga CF",
+      "short": "MLC",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#be192f",
+      "logo": "/clubs/la-liga-malaga-cf.png"
+    },
+    {
+      "id": "la-liga-racing-santander",
+      "name": "Racing Santander",
+      "short": "RS",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#e23c84",
+      "logo": "/clubs/la-liga-racing-santander.png"
+    },
+    {
+      "id": "la-liga-rayo-vallecano",
+      "name": "Rayo Vallecano",
+      "short": "RV",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#f67328",
+      "logo": "/clubs/la-liga-rayo-vallecano.png"
+    },
+    {
+      "id": "la-liga-rcd-espanyol-barcelona",
+      "name": "RCD Espanyol Barcelona",
+      "short": "BAR",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#a50044",
+      "logo": "/clubs/la-liga-rcd-espanyol-barcelona.png"
+    },
+    {
+      "id": "la-liga-real-betis-balompie",
+      "name": "Real Betis Balompié",
+      "short": "BET",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#0bb363",
+      "logo": "/clubs/la-liga-real-betis-balompie.png"
+    },
+    {
+      "id": "la-liga-real-madrid",
+      "name": "Real Madrid",
+      "short": "RMA",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#ffffff",
+      "logo": "/clubs/la-liga-real-madrid.png"
+    },
+    {
+      "id": "la-liga-real-sociedad",
+      "name": "Real Sociedad",
+      "short": "RSO",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#0067b1",
+      "logo": "/clubs/la-liga-real-sociedad.png"
+    },
+    {
+      "id": "la-liga-sevilla-fc",
+      "name": "Sevilla FC",
+      "short": "SEV",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#d4a574",
+      "logo": "/clubs/la-liga-sevilla-fc.png"
+    },
+    {
+      "id": "la-liga-valencia-cf",
+      "name": "Valencia CF",
+      "short": "VAL",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#ee3524",
+      "logo": "/clubs/la-liga-valencia-cf.png"
+    },
+    {
+      "id": "la-liga-villarreal-cf",
+      "name": "Villarreal CF",
+      "short": "VIL",
+      "league": "La Liga",
+      "leagueId": "la-liga",
+      "color": "#ffe14d",
+      "logo": "/clubs/la-liga-villarreal-cf.png"
+    },
+    {
+      "id": "ligue-1-aj-auxerre",
+      "name": "AJ Auxerre",
+      "short": "AA",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#ea2eb5",
+      "logo": "/clubs/ligue-1-aj-auxerre.png"
+    },
+    {
+      "id": "ligue-1-angers-sco",
+      "name": "Angers SCO",
+      "short": "AS",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#dcf519",
+      "logo": "/clubs/ligue-1-angers-sco.png"
+    },
+    {
+      "id": "ligue-1-as-monaco",
+      "name": "AS Monaco",
+      "short": "ASM",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#e30613",
+      "logo": "/clubs/ligue-1-as-monaco.png"
+    },
+    {
+      "id": "ligue-1-estac-troyes",
+      "name": "ESTAC Troyes",
+      "short": "ET",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#eff628",
+      "logo": "/clubs/ligue-1-estac-troyes.png"
+    },
+    {
+      "id": "ligue-1-fc-lorient",
+      "name": "FC Lorient",
+      "short": "FL",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#2bf3df",
+      "logo": "/clubs/ligue-1-fc-lorient.png"
+    },
+    {
+      "id": "ligue-1-fc-toulouse",
+      "name": "FC Toulouse",
+      "short": "FT",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#2e38ea",
+      "logo": "/clubs/ligue-1-fc-toulouse.png"
+    },
+    {
+      "id": "ligue-1-le-havre-ac",
+      "name": "Le Havre AC",
+      "short": "LHA",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#c11fe5",
+      "logo": "/clubs/ligue-1-le-havre-ac.png"
+    },
+    {
+      "id": "ligue-1-le-mans-fc",
+      "name": "Le Mans FC",
+      "short": "LMF",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#e5343d",
+      "logo": "/clubs/ligue-1-le-mans-fc.png"
+    },
+    {
+      "id": "ligue-1-losc-lille",
+      "name": "LOSC Lille",
+      "short": "LOSC",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#e01a22",
+      "logo": "/clubs/ligue-1-losc-lille.png"
+    },
+    {
+      "id": "ligue-1-ogc-nice",
+      "name": "OGC Nice",
+      "short": "ON",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#bdd110",
+      "logo": "/clubs/ligue-1-ogc-nice.png"
+    },
+    {
+      "id": "ligue-1-olympique-lyon",
+      "name": "Olympique Lyon",
+      "short": "OL",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#003399",
+      "logo": "/clubs/ligue-1-olympique-lyon.png"
+    },
+    {
+      "id": "ligue-1-olympique-marseille",
+      "name": "Olympique Marseille",
+      "short": "OM",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#2faee0",
+      "logo": "/clubs/ligue-1-olympique-marseille.png"
+    },
+    {
+      "id": "ligue-1-paris-fc",
+      "name": "Paris FC",
+      "short": "PF",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#0fd297",
+      "logo": "/clubs/ligue-1-paris-fc.png"
+    },
+    {
+      "id": "ligue-1-paris-saint-germain",
+      "name": "Paris Saint-Germain",
+      "short": "PSG",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#004170",
+      "logo": "/clubs/ligue-1-paris-saint-germain.png"
+    },
+    {
+      "id": "ligue-1-rc-lens",
+      "name": "RC Lens",
+      "short": "RL",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#3b6ede",
+      "logo": "/clubs/ligue-1-rc-lens.png"
+    },
+    {
+      "id": "ligue-1-rc-strasbourg-alsace",
+      "name": "RC Strasbourg Alsace",
+      "short": "RSA",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#25ce12",
+      "logo": "/clubs/ligue-1-rc-strasbourg-alsace.png"
+    },
+    {
+      "id": "ligue-1-stade-brestois-29",
+      "name": "Stade Brestois 29",
+      "short": "SB2",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#cd08e7",
+      "logo": "/clubs/ligue-1-stade-brestois-29.png"
+    },
+    {
+      "id": "ligue-1-stade-rennais-fc",
+      "name": "Stade Rennais FC",
+      "short": "SRF",
+      "league": "Ligue 1",
+      "leagueId": "ligue-1",
+      "color": "#08e26e",
+      "logo": "/clubs/ligue-1-stade-rennais-fc.png"
+    },
+    {
+      "id": "primeira-liga-academico-viseu-fc",
+      "name": "Académico Viseu FC",
+      "short": "AMVF",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#0fcc12",
+      "logo": "/clubs/primeira-liga-academico-viseu-fc.png"
+    },
+    {
+      "id": "primeira-liga-casa-pia-ac",
+      "name": "Casa Pia AC",
+      "short": "CPA",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#35cbe9",
+      "logo": "/clubs/primeira-liga-casa-pia-ac.png"
+    },
+    {
+      "id": "primeira-liga-cd-nacional",
+      "name": "CD Nacional",
+      "short": "CN",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#40cb15",
+      "logo": "/clubs/primeira-liga-cd-nacional.png"
+    },
+    {
+      "id": "primeira-liga-cd-santa-clara",
+      "name": "CD Santa Clara",
+      "short": "CSC",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#25d41c",
+      "logo": "/clubs/primeira-liga-cd-santa-clara.png"
+    },
+    {
+      "id": "primeira-liga-cf-estrela-amadora",
+      "name": "CF Estrela Amadora",
+      "short": "CEA",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#8910c6",
+      "logo": "/clubs/primeira-liga-cf-estrela-amadora.png"
+    },
+    {
+      "id": "primeira-liga-cs-maritimo",
+      "name": "CS Marítimo",
+      "short": "CMT",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#1a6edb",
+      "logo": "/clubs/primeira-liga-cs-maritimo.png"
+    },
+    {
+      "id": "primeira-liga-fc-alverca",
+      "name": "FC Alverca",
+      "short": "FA",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#10d534",
+      "logo": "/clubs/primeira-liga-fc-alverca.png"
+    },
+    {
+      "id": "primeira-liga-fc-arouca",
+      "name": "FC Arouca",
+      "short": "FA",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#1fe0d3",
+      "logo": "/clubs/primeira-liga-fc-arouca.png"
+    },
+    {
+      "id": "primeira-liga-fc-famalicao",
+      "name": "FC Famalicão",
+      "short": "FFO",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#bf1871",
+      "logo": "/clubs/primeira-liga-fc-famalicao.png"
+    },
+    {
+      "id": "primeira-liga-fc-porto",
+      "name": "FC Porto",
+      "short": "POR",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#003893",
+      "logo": "/clubs/primeira-liga-fc-porto.png"
+    },
+    {
+      "id": "primeira-liga-gd-estoril-praia",
+      "name": "GD Estoril Praia",
+      "short": "GEP",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#4314c2",
+      "logo": "/clubs/primeira-liga-gd-estoril-praia.png"
+    },
+    {
+      "id": "primeira-liga-gil-vicente-fc",
+      "name": "Gil Vicente FC",
+      "short": "GVF",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#e42137",
+      "logo": "/clubs/primeira-liga-gil-vicente-fc.png"
+    },
+    {
+      "id": "primeira-liga-moreirense-fc",
+      "name": "Moreirense FC",
+      "short": "MF",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#c98622",
+      "logo": "/clubs/primeira-liga-moreirense-fc.png"
+    },
+    {
+      "id": "primeira-liga-rio-ave-fc",
+      "name": "Rio Ave FC",
+      "short": "RAF",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#df1152",
+      "logo": "/clubs/primeira-liga-rio-ave-fc.png"
+    },
+    {
+      "id": "primeira-liga-sc-braga",
+      "name": "SC Braga",
+      "short": "SB",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#67f21c",
+      "logo": "/clubs/primeira-liga-sc-braga.png"
+    },
+    {
+      "id": "primeira-liga-sl-benfica",
+      "name": "SL Benfica",
+      "short": "BEN",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#e41513",
+      "logo": "/clubs/primeira-liga-sl-benfica.png"
+    },
+    {
+      "id": "primeira-liga-sporting-cp",
+      "name": "Sporting CP",
+      "short": "SCP",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#008057",
+      "logo": "/clubs/primeira-liga-sporting-cp.png"
+    },
+    {
+      "id": "primeira-liga-vitoria-guimaraes-sc",
+      "name": "Vitória Guimarães SC",
+      "short": "VRGES",
+      "league": "Primeira Liga",
+      "leagueId": "primeira-liga",
+      "color": "#e9ad20",
+      "logo": "/clubs/primeira-liga-vitoria-guimaraes-sc.png"
+    },
+    {
+      "id": "belgian-pro-cercle-brugge",
+      "name": "Cercle Brugge",
+      "short": "CB",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#20b4cb",
+      "logo": "/clubs/belgian-pro-cercle-brugge.png"
+    },
+    {
+      "id": "belgian-pro-club-brugge-kv",
+      "name": "Club Brugge KV",
+      "short": "CBK",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#c516b7",
+      "logo": "/clubs/belgian-pro-club-brugge-kv.png"
+    },
+    {
+      "id": "belgian-pro-kaa-gent",
+      "name": "KAA Gent",
+      "short": "KG",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#9ddb29",
+      "logo": "/clubs/belgian-pro-kaa-gent.png"
+    },
+    {
+      "id": "belgian-pro-krc-genk",
+      "name": "KRC Genk",
+      "short": "KG",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#e73c6c",
+      "logo": "/clubs/belgian-pro-krc-genk.png"
+    },
+    {
+      "id": "belgian-pro-kv-kortrijk",
+      "name": "KV Kortrijk",
+      "short": "KK",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#3dd115",
+      "logo": "/clubs/belgian-pro-kv-kortrijk.png"
+    },
+    {
+      "id": "belgian-pro-kv-mechelen",
+      "name": "KV Mechelen",
+      "short": "KM",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#da7e07",
+      "logo": "/clubs/belgian-pro-kv-mechelen.png"
+    },
+    {
+      "id": "belgian-pro-kvc-westerlo",
+      "name": "KVC Westerlo",
+      "short": "KW",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#1fdb4e",
+      "logo": "/clubs/belgian-pro-kvc-westerlo.png"
+    },
+    {
+      "id": "belgian-pro-lommel-sk",
+      "name": "Lommel SK",
+      "short": "LS",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#3de1a5",
+      "logo": "/clubs/belgian-pro-lommel-sk.png"
+    },
+    {
+      "id": "belgian-pro-oud-heverlee-leuven",
+      "name": "Oud-Heverlee Leuven",
+      "short": "OHL",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#f7ab26",
+      "logo": "/clubs/belgian-pro-oud-heverlee-leuven.png"
+    },
+    {
+      "id": "belgian-pro-raal-la-louviere",
+      "name": "RAAL La Louvière",
+      "short": "RLLR",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#5e16f8",
+      "logo": "/clubs/belgian-pro-raal-la-louviere.png"
+    },
+    {
+      "id": "belgian-pro-royal-antwerp-fc",
+      "name": "Royal Antwerp FC",
+      "short": "RAF",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#dfdb07",
+      "logo": "/clubs/belgian-pro-royal-antwerp-fc.png"
+    },
+    {
+      "id": "belgian-pro-royal-charleroi-sc",
+      "name": "Royal Charleroi SC",
+      "short": "RCS",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#21f2ba",
+      "logo": "/clubs/belgian-pro-royal-charleroi-sc.png"
+    },
+    {
+      "id": "belgian-pro-rsc-anderlecht",
+      "name": "RSC Anderlecht",
+      "short": "RA",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#1fb748",
+      "logo": "/clubs/belgian-pro-rsc-anderlecht.png"
+    },
+    {
+      "id": "belgian-pro-sint-truidense-vv",
+      "name": "Sint-Truidense VV",
+      "short": "STV",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#e41607",
+      "logo": "/clubs/belgian-pro-sint-truidense-vv.png"
+    },
+    {
+      "id": "belgian-pro-sk-beveren",
+      "name": "SK Beveren",
+      "short": "SB",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#601bc0",
+      "logo": "/clubs/belgian-pro-sk-beveren.png"
+    },
+    {
+      "id": "belgian-pro-standard-liege",
+      "name": "Standard Liège",
+      "short": "SLG",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#14e144",
+      "logo": "/clubs/belgian-pro-standard-liege.png"
+    },
+    {
+      "id": "belgian-pro-union-saint-gilloise",
+      "name": "Union Saint-Gilloise",
+      "short": "USG",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#b51ef1",
+      "logo": "/clubs/belgian-pro-union-saint-gilloise.png"
+    },
+    {
+      "id": "belgian-pro-zulte-waregem",
+      "name": "Zulte Waregem",
+      "short": "ZW",
+      "league": "Pro League",
+      "leagueId": "belgian-pro",
+      "color": "#de0d8a",
+      "logo": "/clubs/belgian-pro-zulte-waregem.png"
+    },
+    {
+      "id": "serie-a-ac-milan",
+      "name": "AC Milan",
+      "short": "MIL",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#fb090b",
+      "logo": "/clubs/serie-a-ac-milan.png"
+    },
+    {
+      "id": "serie-a-ac-monza",
+      "name": "AC Monza",
+      "short": "AM",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#59cd23",
+      "logo": "/clubs/serie-a-ac-monza.png"
+    },
+    {
+      "id": "serie-a-acf-fiorentina",
+      "name": "ACF Fiorentina",
+      "short": "FIO",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#482e92",
+      "logo": "/clubs/serie-a-acf-fiorentina.png"
+    },
+    {
+      "id": "serie-a-as-roma",
+      "name": "AS Roma",
+      "short": "ROM",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#8e1f2f",
+      "logo": "/clubs/serie-a-as-roma.png"
+    },
+    {
+      "id": "serie-a-atalanta-bc",
+      "name": "Atalanta BC",
+      "short": "ATA",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#1e71b8",
+      "logo": "/clubs/serie-a-atalanta-bc.png"
+    },
+    {
+      "id": "serie-a-bologna-fc-1909",
+      "name": "Bologna FC 1909",
+      "short": "BF1",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#f8e325",
+      "logo": "/clubs/serie-a-bologna-fc-1909.png"
+    },
+    {
+      "id": "serie-a-cagliari-calcio",
+      "name": "Cagliari Calcio",
+      "short": "CC",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#f36f12",
+      "logo": "/clubs/serie-a-cagliari-calcio.png"
+    },
+    {
+      "id": "serie-a-como-1907",
+      "name": "Como 1907",
+      "short": "C1",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#cb5e10",
+      "logo": "/clubs/serie-a-como-1907.png"
+    },
+    {
+      "id": "serie-a-frosinone-calcio",
+      "name": "Frosinone Calcio",
+      "short": "FC",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#def415",
+      "logo": "/clubs/serie-a-frosinone-calcio.png"
+    },
+    {
+      "id": "serie-a-genoa-cfc",
+      "name": "Genoa CFC",
+      "short": "GC",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#0fd297",
+      "logo": "/clubs/serie-a-genoa-cfc.png"
+    },
+    {
+      "id": "serie-a-inter-milan",
+      "name": "Inter Milan",
+      "short": "INT",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#010E80",
+      "logo": "/clubs/serie-a-inter-milan.png"
+    },
+    {
+      "id": "serie-a-juventus-fc",
+      "name": "Juventus FC",
+      "short": "JUV",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#ffffff",
+      "logo": "/clubs/serie-a-juventus-fc.png"
+    },
+    {
+      "id": "serie-a-parma-calcio-1913",
+      "name": "Parma Calcio 1913",
+      "short": "PC1",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#13d8a3",
+      "logo": "/clubs/serie-a-parma-calcio-1913.png"
+    },
+    {
+      "id": "serie-a-ss-lazio",
+      "name": "SS Lazio",
+      "short": "LAZ",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#87d8f7",
+      "logo": "/clubs/serie-a-ss-lazio.png"
+    },
+    {
+      "id": "serie-a-ssc-napoli",
+      "name": "SSC Napoli",
+      "short": "NAP",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#12a0d7",
+      "logo": "/clubs/serie-a-ssc-napoli.png"
+    },
+    {
+      "id": "serie-a-torino-fc",
+      "name": "Torino FC",
+      "short": "TF",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#32eb1e",
+      "logo": "/clubs/serie-a-torino-fc.png"
+    },
+    {
+      "id": "serie-a-udinese-calcio",
+      "name": "Udinese Calcio",
+      "short": "UC",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#e41b50",
+      "logo": "/clubs/serie-a-udinese-calcio.png"
+    },
+    {
+      "id": "serie-a-us-lecce",
+      "name": "US Lecce",
+      "short": "UL",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#4729e0",
+      "logo": "/clubs/serie-a-us-lecce.png"
+    },
+    {
+      "id": "serie-a-us-sassuolo",
+      "name": "US Sassuolo",
+      "short": "US",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#b0df3a",
+      "logo": "/clubs/serie-a-us-sassuolo.png"
+    },
+    {
+      "id": "serie-a-venezia-fc",
+      "name": "Venezia FC",
+      "short": "VF",
+      "league": "Serie A",
+      "leagueId": "serie-a",
+      "color": "#c2ba19",
+      "logo": "/clubs/serie-a-venezia-fc.png"
+    },
+    {
+      "id": "scottish-prem-aberdeen-fc",
+      "name": "Aberdeen FC",
+      "short": "AF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#0ce4ae",
+      "logo": "/clubs/scottish-prem-aberdeen-fc.png"
+    },
+    {
+      "id": "scottish-prem-celtic-fc",
+      "name": "Celtic FC",
+      "short": "CEL",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#018749",
+      "logo": "/clubs/scottish-prem-celtic-fc.png"
+    },
+    {
+      "id": "scottish-prem-dundee-fc",
+      "name": "Dundee FC",
+      "short": "DF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#1235e2",
+      "logo": "/clubs/scottish-prem-dundee-fc.png"
+    },
+    {
+      "id": "scottish-prem-dundee-united-fc",
+      "name": "Dundee United FC",
+      "short": "DUF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#c01b45",
+      "logo": "/clubs/scottish-prem-dundee-united-fc.png"
+    },
+    {
+      "id": "scottish-prem-falkirk-fc",
+      "name": "Falkirk FC",
+      "short": "FF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#7407e9",
+      "logo": "/clubs/scottish-prem-falkirk-fc.png"
+    },
+    {
+      "id": "scottish-prem-heart-of-midlothian-fc",
+      "name": "Heart of Midlothian FC",
+      "short": "HOMF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#eabb10",
+      "logo": "/clubs/scottish-prem-heart-of-midlothian-fc.png"
+    },
+    {
+      "id": "scottish-prem-hibernian-fc",
+      "name": "Hibernian FC",
+      "short": "HF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#801edc",
+      "logo": "/clubs/scottish-prem-hibernian-fc.png"
+    },
+    {
+      "id": "scottish-prem-kilmarnock-fc",
+      "name": "Kilmarnock FC",
+      "short": "KF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#d53c15",
+      "logo": "/clubs/scottish-prem-kilmarnock-fc.png"
+    },
+    {
+      "id": "scottish-prem-motherwell-fc",
+      "name": "Motherwell FC",
+      "short": "MF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#dcdc38",
+      "logo": "/clubs/scottish-prem-motherwell-fc.png"
+    },
+    {
+      "id": "scottish-prem-rangers-fc",
+      "name": "Rangers FC",
+      "short": "RAN",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#1b458f",
+      "logo": "/clubs/scottish-prem-rangers-fc.png"
+    },
+    {
+      "id": "scottish-prem-st-johnstone-fc",
+      "name": "St. Johnstone FC",
+      "short": "SJF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#4a20d5",
+      "logo": "/clubs/scottish-prem-st-johnstone-fc.png"
+    },
+    {
+      "id": "scottish-prem-st-mirren-fc",
+      "name": "St. Mirren FC",
+      "short": "SMF",
+      "league": "SPL",
+      "leagueId": "scottish-prem",
+      "color": "#2818d8",
+      "logo": "/clubs/scottish-prem-st-mirren-fc.png"
+    },
+    {
+      "id": "super-lig-alanyaspor",
+      "name": "Alanyaspor",
+      "short": "ALANY",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#0e27c8",
+      "logo": "/clubs/super-lig-alanyaspor.png"
+    },
+    {
+      "id": "super-lig-amed-sk",
+      "name": "Amed SK",
+      "short": "AS",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#de3b6e",
+      "logo": "/clubs/super-lig-amed-sk.png"
+    },
+    {
+      "id": "super-lig-basaksehir-fk",
+      "name": "Basaksehir FK",
+      "short": "BF",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#1bd03f",
+      "logo": "/clubs/super-lig-basaksehir-fk.png"
+    },
+    {
+      "id": "super-lig-besiktas-jk",
+      "name": "Besiktas JK",
+      "short": "BES",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#5022f7",
+      "logo": "/clubs/super-lig-besiktas-jk.png"
+    },
+    {
+      "id": "super-lig-caykur-rizespor",
+      "name": "Caykur Rizespor",
+      "short": "CR",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#3224cc",
+      "logo": "/clubs/super-lig-caykur-rizespor.png"
+    },
+    {
+      "id": "super-lig-corum-fk",
+      "name": "Corum FK",
+      "short": "CF",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#09e6f1",
+      "logo": "/clubs/super-lig-corum-fk.png"
+    },
+    {
+      "id": "super-lig-erzurumspor-fk",
+      "name": "Erzurumspor FK",
+      "short": "EF",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#1a41cb",
+      "logo": "/clubs/super-lig-erzurumspor-fk.png"
+    },
+    {
+      "id": "super-lig-eyupspor",
+      "name": "Eyüpspor",
+      "short": "EP",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#87e916",
+      "logo": "/clubs/super-lig-eyupspor.png"
+    },
+    {
+      "id": "super-lig-fenerbahce",
+      "name": "Fenerbahce",
+      "short": "FEN",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#0a2f6c",
+      "logo": "/clubs/super-lig-fenerbahce.png"
+    },
+    {
+      "id": "super-lig-galatasaray",
+      "name": "Galatasaray",
+      "short": "GAL",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#a90432",
+      "logo": "/clubs/super-lig-galatasaray.png"
+    },
+    {
+      "id": "super-lig-gaziantep-fk",
+      "name": "Gaziantep FK",
+      "short": "GF",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#c8df34",
+      "logo": "/clubs/super-lig-gaziantep-fk.png"
+    },
+    {
+      "id": "super-lig-genclerbirligi-ankara",
+      "name": "Genclerbirligi Ankara",
+      "short": "GA",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#3d29f5",
+      "logo": "/clubs/super-lig-genclerbirligi-ankara.png"
+    },
+    {
+      "id": "super-lig-goztepe",
+      "name": "Göztepe",
+      "short": "GZ",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#c913a1",
+      "logo": "/clubs/super-lig-goztepe.png"
+    },
+    {
+      "id": "super-lig-kasimpasa",
+      "name": "Kasimpasa",
+      "short": "KASIM",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#b9321d",
+      "logo": "/clubs/super-lig-kasimpasa.png"
+    },
+    {
+      "id": "super-lig-kocaelispor",
+      "name": "Kocaelispor",
+      "short": "KOCAE",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#701eb8",
+      "logo": "/clubs/super-lig-kocaelispor.png"
+    },
+    {
+      "id": "super-lig-konyaspor",
+      "name": "Konyaspor",
+      "short": "KONYA",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#1e5ac2",
+      "logo": "/clubs/super-lig-konyaspor.png"
+    },
+    {
+      "id": "super-lig-samsunspor",
+      "name": "Samsunspor",
+      "short": "SAMSU",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#e18937",
+      "logo": "/clubs/super-lig-samsunspor.png"
+    },
+    {
+      "id": "super-lig-trabzonspor",
+      "name": "Trabzonspor",
+      "short": "TRABZ",
+      "league": "Süper Lig",
+      "leagueId": "super-lig",
+      "color": "#37e524",
+      "logo": "/clubs/super-lig-trabzonspor.png"
+    }
+  ]
+}

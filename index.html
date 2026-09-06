@@ -1,0 +1,3601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCL Prediction Simulator - Portrait Mode</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;700;900&display=swap');
+  
+  :root {
+    --bg-color: #050a0f;
+  }
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    background-image: radial-gradient(circle at center, #0a111a 0%, #020406 100%);
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Setup Panel */
+  #setup-panel {
+    background: rgba(10, 20, 30, 0.85);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    padding: 40px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 92vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    backdrop-filter: blur(15px);
+    z-index: 50;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box;
+  }
+  h2 {
+    margin: 0 0 10px 0;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255,255,255,0.4);
+  }
+  .team-setup {
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .team-setup h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .input-group label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+  }
+  input[type="text"] {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+  input[type="file"] {
+    color: #ccc;
+    font-size: 0.8rem;
+  }
+  select {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+  }
+  #t1-club, #t2-club {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 52px;
+    padding: 0 40px 0 14px;
+    border-radius: 12px;
+    line-height: normal;
+    background-color: rgba(255,255,255,0.1);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ffffff' d='M1.4 0.6L6 5.2 10.6 0.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px 8px;
+  }
+  select option, select optgroup {
+    background: #0a111a;
+    color: #fff;
+  }
+  .team-preview-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .team-logo-preview {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    background: #0a111a;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.18);
+    flex-shrink: 0;
+    padding: 4px;
+    box-sizing: border-box;
+    box-shadow: 0 0 16px rgba(0, 243, 255, 0.15);
+  }
+  .team-logo-preview:not([src]), .team-logo-preview[src=""] {
+    display: none;
+  }
+  
+  #start-btn {
+    margin-top: 20px;
+    padding: 16px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: white;
+    background: linear-gradient(135deg, #ff003c, #00f3ff);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  #start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+  }
+
+  /* Post Match UI */
+  #post-match-panel {
+    display: none;
+    position: absolute;
+    z-index: 50;
+    background: rgba(10, 20, 30, 0.95);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 24px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(20px);
+    width: min(420px, 92vw);
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+  #post-match-panel h2 { margin-bottom: 12px; }
+  #preview-wrap {
+    margin: 0 auto 16px;
+    width: 100%;
+    max-width: 220px;
+    aspect-ratio: 9 / 16;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  #preview-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+  }
+  #preview-label {
+    margin: 0 0 8px;
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  #upload-status {
+    margin: 12px 0 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #ccc;
+    min-height: 1.5em;
+    text-align: left;
+  }
+  #upload-status.success { color: #ccc; }
+  #upload-status.error { color: #f87171; }
+  #upload-status a { color: #00f3ff; }
+  .upload-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .upload-summary-head {
+    color: #4ade80;
+    font-weight: 700;
+  }
+  .upload-summary-meta {
+    font-size: 0.82rem;
+    color: #aaa;
+    line-height: 1.45;
+  }
+  .upload-platform {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .upload-platform.ok { border-color: rgba(74, 222, 128, 0.35); }
+  .upload-platform.err { border-color: rgba(248, 113, 113, 0.35); }
+  .upload-platform-name {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 4px;
+  }
+  .upload-platform.ok .upload-platform-name { color: #4ade80; }
+  .upload-platform.err .upload-platform-name { color: #f87171; }
+  .upload-platform-body {
+    font-size: 0.85rem;
+    color: #ddd;
+    word-break: break-word;
+  }
+  .upload-caption-box {
+    margin-top: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.78rem;
+    color: #ccc;
+    white-space: pre-wrap;
+  }
+  .upload-copy-btn {
+    margin-top: 8px;
+    width: 100%;
+  }
+  #server-badge {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  #server-badge.ready { color: #4ade80; }
+  #youtube-card {
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+    text-align: left;
+  }
+  #social-accounts {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .social-card {
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+    text-align: left;
+  }
+  .social-card h3, #youtube-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.05rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  #yt-account-row, .social-account-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    min-height: 40px;
+  }
+  #yt-avatar, .social-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #222;
+    display: none;
+  }
+  #yt-account-meta, .social-account-meta {
+    flex: 1;
+    min-width: 0;
+  }
+  #yt-account-name, .social-account-name {
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  #yt-account-status, .social-account-status {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 2px;
+  }
+  #yt-account-status.ok, .social-account-status.ok { color: #4ade80; }
+  #yt-account-status.warn, .social-account-status.warn { color: #fbbf24; }
+  #yt-account-status.err, .social-account-status.err { color: #f87171; }
+  #yt-actions, .social-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .yt-btn {
+    flex: 1;
+    min-width: 90px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+  }
+  .yt-btn.primary {
+    background: linear-gradient(135deg, #ff003c, #00f3ff);
+    border: none;
+  }
+  .yt-btn.danger {
+    border-color: rgba(248, 113, 113, 0.4);
+    color: #fca5a5;
+  }
+  .yt-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .panel-tabs {
+    display: flex;
+    gap: 8px;
+    margin: -8px 0 4px;
+  }
+  .panel-tab {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    color: #aaa;
+    font-weight: 800;
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .panel-tab.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(255,0,60,0.35), rgba(0,243,255,0.25));
+    border-color: rgba(255,255,255,0.25);
+  }
+  #tab-setup {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  #tab-history, #tab-fixtures {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+  }
+  #tab-history.active, #tab-fixtures.active {
+    display: flex;
+  }
+  #tab-setup.hidden-tab {
+    display: none;
+  }
+  .fixtures-intro, .fixtures-meta {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #888;
+    line-height: 1.4;
+  }
+  .fixtures-day {
+    text-align: left;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .fixtures-day h3 {
+    margin: 0 0 10px;
+    font-size: 0.9rem;
+    color: #00f3ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .fixture-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .fixture-row:first-of-type { border-top: none; padding-top: 0; }
+  .fixture-main {
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.9rem;
+  }
+  .fixture-sub {
+    font-size: 0.75rem;
+    color: #999;
+  }
+  .fixture-why {
+    font-size: 0.72rem;
+    color: #fbbf24;
+  }
+  .fixture-use {
+    margin-top: 6px;
+    align-self: flex-start;
+  }
+  #history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  #history-empty, #history-loading {
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    padding: 20px 8px;
+  }
+  .history-item {
+    text-align: left;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+  }
+  .history-item:hover {
+    border-color: rgba(0, 243, 255, 0.4);
+  }
+  .history-item-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .history-item-meta {
+    font-size: 0.72rem;
+    color: #888;
+    margin-bottom: 8px;
+  }
+  .history-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .hist-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #aaa;
+  }
+  .hist-badge.ok {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.35);
+    background: rgba(74, 222, 128, 0.1);
+  }
+  .hist-badge.miss {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.35);
+    background: rgba(251, 191, 36, 0.08);
+  }
+  #history-detail {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+  }
+  #history-detail.active {
+    display: flex;
+  }
+  #history-detail-title {
+    margin: 0;
+    font-size: 1rem;
+    color: #fff;
+  }
+  #history-detail-meta {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #888;
+  }
+  #history-status {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #ccc;
+    min-height: 1.2em;
+  }
+  #history-status.success { color: #4ade80; }
+  #history-status.error { color: #f87171; }
+  #history-preview-wrap {
+    width: 100%;
+    max-width: 180px;
+    margin: 0 auto;
+    aspect-ratio: 9 / 16;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  #history-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+  }
+  #publish-platforms {
+    text-align: left;
+    margin: 0 0 16px;
+  }
+  #publish-platforms h3 {
+    margin: 0 0 10px;
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .platform-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    font-size: 0.9rem;
+    color: #ddd;
+    cursor: pointer;
+  }
+  .platform-toggle input { accent-color: #00f3ff; }
+  #final-score {
+    margin: 0 0 12px;
+    font-size: 1.1rem;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+  #music-section {
+    text-align: left;
+    margin: 0 0 16px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  #music-section h3 {
+    margin: 0 0 10px;
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  #schedule-section {
+    text-align: left;
+    margin: 0 0 16px;
+  }
+  #schedule-section h3 {
+    margin: 0 0 10px;
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  #schedule-section .input-group {
+    margin-bottom: 0;
+  }
+  .dt-field {
+    position: relative;
+  }
+  .dt-trigger {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+  .dt-trigger:hover {
+    border-color: rgba(0, 243, 255, 0.45);
+    box-shadow: 0 0 24px rgba(0, 243, 255, 0.12);
+  }
+  .dt-trigger.open {
+    border-color: rgba(0, 243, 255, 0.55);
+    box-shadow: 0 0 28px rgba(0, 243, 255, 0.16);
+  }
+  .dt-trigger-label {
+    color: #fff;
+  }
+  .dt-trigger-label.placeholder {
+    color: #888;
+    font-weight: 600;
+  }
+  .dt-trigger-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    background: rgba(0, 243, 255, 0.12);
+    border: 1px solid rgba(0, 243, 255, 0.25);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    color: #00f3ff;
+    font-size: 0.85rem;
+  }
+  .dt-panel {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 80;
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(8, 14, 22, 0.96);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 40px rgba(0, 243, 255, 0.08);
+    backdrop-filter: blur(18px);
+  }
+  .dt-panel.open { display: block; }
+  .dt-month-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .dt-month-label {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    font-size: 0.95rem;
+  }
+  .dt-nav {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  .dt-nav:hover {
+    border-color: rgba(0, 243, 255, 0.4);
+    color: #00f3ff;
+  }
+  .dt-weekdays, .dt-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .dt-weekdays span {
+    text-align: center;
+    font-size: 0.65rem;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 0;
+  }
+  .dt-day {
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: #ddd;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .dt-day:hover:not(:disabled) {
+    background: rgba(0, 243, 255, 0.12);
+    color: #fff;
+  }
+  .dt-day.muted {
+    color: #555;
+  }
+  .dt-day.today {
+    box-shadow: inset 0 0 0 1px rgba(0, 243, 255, 0.45);
+  }
+  .dt-day.selected {
+    background: linear-gradient(135deg, #ff003c, #00f3ff);
+    color: #fff;
+    box-shadow: 0 0 18px rgba(0, 243, 255, 0.35);
+  }
+  .dt-day:disabled {
+    opacity: 0.28;
+    cursor: not-allowed;
+  }
+  .dt-time-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .dt-time-group label {
+    display: block;
+    font-size: 0.68rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .dt-time-group select {
+    width: 100%;
+    appearance: none;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 12px;
+    color: #fff;
+    padding: 10px 12px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+  }
+  .dt-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .dt-footer .yt-btn { flex: 1; }
+  .music-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .music-option:hover { background: rgba(255,255,255,0.1); }
+  .music-option.selected {
+    border-color: rgba(0, 243, 255, 0.5);
+    background: rgba(0, 243, 255, 0.1);
+  }
+  .music-option input { accent-color: #00f3ff; flex-shrink: 0; }
+  .music-option .track-name {
+    flex: 1;
+    font-size: 0.85rem;
+    color: #ddd;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .preview-song-btn {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #00f3ff;
+    background: rgba(0, 243, 255, 0.12);
+    border: 1px solid rgba(0, 243, 255, 0.35);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .preview-song-btn.playing {
+    color: #ff003c;
+    border-color: rgba(255, 0, 60, 0.45);
+    background: rgba(255, 0, 60, 0.12);
+  }
+  #action-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  #generate-btn, #download-btn, #x-manual-btn {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: white;
+    background: linear-gradient(135deg, #ff003c, #00f3ff);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  #download-btn, #x-manual-btn {
+    background: #fff;
+    color: #000;
+    display: none;
+  }
+  #generate-btn:disabled, #download-btn:disabled, #x-manual-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .publish-hint {
+    margin: 8px 0 0;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: #888;
+    text-align: left;
+  }
+  #restart-btn {
+    padding: 12px 20px;
+    background: transparent;
+    color: #aaa;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+
+  /* Canvas */
+  canvas {
+    /* Limit height and width to fit screen perfectly while keeping 9:16 aspect ratio */
+    max-height: 100vh;
+    max-width: 100vw;
+    aspect-ratio: 9 / 16;
+    object-fit: contain;
+    filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.5));
+    border-radius: 20px;
+  }
+
+</style>
+</head>
+<body>
+
+<div id="setup-panel">
+  <div class="panel-tabs">
+    <button type="button" class="panel-tab active" id="tab-btn-setup" data-tab="setup">New match</button>
+    <button type="button" class="panel-tab" id="tab-btn-fixtures" data-tab="fixtures">Fixtures</button>
+    <button type="button" class="panel-tab" id="tab-btn-history" data-tab="history">History</button>
+  </div>
+
+  <div id="tab-setup">
+  <h2>Simulation Setup</h2>
+  
+  <div class="team-setup">
+    <h3>Team 1</h3>
+    <div class="input-group">
+      <label>Club</label>
+      <select id="t1-club"></select>
+    </div>
+    <div class="custom-club-fields" id="t1-custom" style="display:none;">
+      <div class="input-group">
+        <label>Custom name (scoreboard, max 5)</label>
+        <input type="text" id="t1-name" value="PSG" maxlength="5">
+      </div>
+      <div class="input-group">
+        <label>Custom logo</label>
+        <input type="file" id="t1-logo" accept="image/*">
+      </div>
+    </div>
+    <div class="team-preview-row">
+      <img id="t1-preview" class="team-logo-preview" alt="">
+      <div class="input-group" style="flex:1;margin:0;">
+        <label>Neon Color</label>
+        <input type="color" id="t1-color" value="#00f3ff">
+      </div>
+    </div>
+  </div>
+
+  <div class="team-setup">
+    <h3>Team 2</h3>
+    <div class="input-group">
+      <label>Club</label>
+      <select id="t2-club"></select>
+    </div>
+    <div class="custom-club-fields" id="t2-custom" style="display:none;">
+      <div class="input-group">
+        <label>Custom name (scoreboard, max 5)</label>
+        <input type="text" id="t2-name" value="INT" maxlength="5">
+      </div>
+      <div class="input-group">
+        <label>Custom logo</label>
+        <input type="file" id="t2-logo" accept="image/*">
+      </div>
+    </div>
+    <div class="team-preview-row">
+      <img id="t2-preview" class="team-logo-preview" alt="">
+      <div class="input-group" style="flex:1;margin:0;">
+        <label>Neon Color</label>
+        <input type="color" id="t2-color" value="#ff003c">
+      </div>
+    </div>
+  </div>
+
+  <div id="social-accounts">
+    <div class="social-card" id="youtube-card">
+      <h3>YouTube</h3>
+      <div class="social-account-row">
+        <img class="social-avatar" id="yt-avatar" alt="">
+        <div class="social-account-meta">
+          <div class="social-account-name" id="yt-account-name">Checking…</div>
+          <div class="social-account-status" id="yt-account-status">Connecting to server</div>
+        </div>
+      </div>
+      <div class="social-actions">
+        <a class="yt-btn primary" id="yt-connect-btn" href="/auth/youtube">Connect</a>
+        <button type="button" class="yt-btn" id="yt-refresh-btn">Refresh</button>
+        <button type="button" class="yt-btn danger" id="yt-disconnect-btn" disabled>Disconnect</button>
+      </div>
+    </div>
+
+    <div class="social-card" id="tiktok-card">
+      <h3>TikTok</h3>
+      <div class="social-account-row">
+        <img class="social-avatar" id="tt-avatar" alt="">
+        <div class="social-account-meta">
+          <div class="social-account-name" id="tt-account-name">Checking…</div>
+          <div class="social-account-status" id="tt-account-status">Connecting to server</div>
+        </div>
+      </div>
+      <div class="social-actions">
+        <a class="yt-btn primary" id="tt-connect-btn" href="/auth/tiktok">Connect</a>
+        <button type="button" class="yt-btn" id="tt-refresh-btn">Refresh</button>
+        <button type="button" class="yt-btn danger" id="tt-disconnect-btn" disabled>Disconnect</button>
+      </div>
+    </div>
+
+    <div class="social-card" id="x-card">
+      <h3>X (Twitter)</h3>
+      <div class="social-account-row">
+        <img class="social-avatar" id="x-avatar" alt="">
+        <div class="social-account-meta">
+          <div class="social-account-name" id="x-account-name">Checking…</div>
+          <div class="social-account-status" id="x-account-status">Connecting to server</div>
+        </div>
+      </div>
+      <div class="social-actions">
+        <a class="yt-btn primary" id="x-connect-btn" href="/auth/x">Connect</a>
+        <button type="button" class="yt-btn" id="x-refresh-btn">Refresh</button>
+        <button type="button" class="yt-btn danger" id="x-disconnect-btn" disabled>Disconnect</button>
+      </div>
+    </div>
+  </div>
+
+  <p id="server-badge">Checking server…</p>
+  <button id="start-btn">Start & Record Video</button>
+  </div>
+
+  <div id="tab-fixtures">
+    <h2>Suggested matches</h2>
+    <p class="fixtures-intro">Interesting fixtures for the next 5 days from live ESPN schedules (refreshed once daily). Gemini can polish the “why” notes when configured.</p>
+    <p id="fixtures-meta" class="fixtures-meta"></p>
+    <p id="fixtures-loading">Loading fixtures…</p>
+    <p id="fixtures-empty" style="display:none;">No upcoming picks found.</p>
+    <div id="fixtures-days"></div>
+    <button type="button" class="yt-btn" id="fixtures-refresh-btn" style="margin-top:8px;">Refresh now</button>
+  </div>
+
+  <div id="tab-history">
+    <div id="history-list-view">
+      <h2>Previous videos</h2>
+      <p id="history-loading">Loading…</p>
+      <p id="history-empty" style="display:none;">No generated MP4s yet. Record a match first.</p>
+      <div id="history-list"></div>
+      <button type="button" class="yt-btn" id="history-refresh-btn" style="margin-top:8px;">Refresh list</button>
+    </div>
+
+    <div id="history-detail">
+      <button type="button" class="yt-btn" id="history-back-btn">← Back</button>
+      <h3 id="history-detail-title">Video</h3>
+      <p id="history-detail-meta"></p>
+      <div id="history-caption-wrap" style="display:none;">
+        <div class="upload-platform-name" style="color:#fbbf24;margin-bottom:6px;">TikTok / social caption</div>
+        <div class="upload-caption-box" id="history-caption-box"></div>
+        <button type="button" class="yt-btn upload-copy-btn" id="history-caption-copy">Copy caption</button>
+      </div>
+      <div id="history-preview-wrap">
+        <video id="history-preview" controls playsinline></video>
+      </div>
+      <div id="history-publish-platforms">
+        <h3 style="margin:0 0 10px;font-size:0.85rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Publish missing</h3>
+        <label class="platform-toggle">
+          <input type="checkbox" id="hist-pub-youtube">
+          <span>YouTube</span>
+        </label>
+        <label class="platform-toggle">
+          <input type="checkbox" id="hist-pub-tiktok">
+          <span>TikTok</span>
+        </label>
+        <label class="platform-toggle">
+          <input type="checkbox" id="hist-pub-x">
+          <span>X</span>
+        </label>
+        <div class="input-group" style="margin-top:10px;">
+          <label>YouTube schedule (optional)</label>
+          <div class="dt-field" id="hist-publish-at-field"></div>
+        </div>
+      </div>
+      <p id="history-status"></p>
+      <div class="social-actions">
+        <a class="yt-btn" id="history-download-btn" href="#" download>Download</a>
+        <button type="button" class="yt-btn" id="history-x-manual-btn">Share to X (manual)</button>
+        <button type="button" class="yt-btn primary" id="history-publish-btn">Publish selected</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="post-match-panel">
+  <h2>Match Completed!</h2>
+  <p id="final-score"></p>
+  <p id="preview-label">Match preview</p>
+  <div id="preview-wrap">
+    <video id="preview-video" controls playsinline></video>
+  </div>
+  <div id="music-section">
+    <h3>Background music</h3>
+    <div id="music-list"></div>
+  </div>
+  <div id="schedule-section">
+    <h3>YouTube schedule</h3>
+    <div class="dt-field" id="publish-at-field"></div>
+  </div>
+  <div id="publish-platforms">
+    <h3>Publish to</h3>
+    <label class="platform-toggle"><input type="checkbox" id="pub-youtube" checked> YouTube</label>
+    <label class="platform-toggle"><input type="checkbox" id="pub-tiktok"> TikTok</label>
+    <label class="platform-toggle"><input type="checkbox" id="pub-x"> X (API — needs credits)</label>
+    <p class="publish-hint">No X credits? After generate, use <strong>Share to X (manual)</strong> — downloads MP4 and opens X with the caption already filled. Just attach the video and post.</p>
+  </div>
+  <div id="action-row">
+    <button id="generate-btn" disabled>Generate MP4 &amp; Upload</button>
+    <button id="download-btn" type="button">Download MP4</button>
+    <button id="x-manual-btn" type="button" disabled>Share to X (manual)</button>
+  </div>
+  <p id="upload-status">Finalizing recording…</p>
+  <button id="restart-btn">Setup New Match</button>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  // UI Panels
+  const setupPanel = document.getElementById('setup-panel');
+  const postMatchPanel = document.getElementById('post-match-panel');
+  const startBtn = document.getElementById('start-btn');
+  const restartBtn = document.getElementById('restart-btn');
+  const generateBtn = document.getElementById('generate-btn');
+  const downloadBtn = document.getElementById('download-btn');
+  const xManualBtn = document.getElementById('x-manual-btn');
+  const uploadStatusEl = document.getElementById('upload-status');
+  const serverBadgeEl = document.getElementById('server-badge');
+  const ytAccountNameEl = document.getElementById('yt-account-name');
+  const ytAccountStatusEl = document.getElementById('yt-account-status');
+  const ytAvatarEl = document.getElementById('yt-avatar');
+  const ytConnectBtn = document.getElementById('yt-connect-btn');
+  const ytRefreshBtn = document.getElementById('yt-refresh-btn');
+  const ytDisconnectBtn = document.getElementById('yt-disconnect-btn');
+  const ttAccountNameEl = document.getElementById('tt-account-name');
+  const ttAccountStatusEl = document.getElementById('tt-account-status');
+  const ttAvatarEl = document.getElementById('tt-avatar');
+  const ttConnectBtn = document.getElementById('tt-connect-btn');
+  const ttRefreshBtn = document.getElementById('tt-refresh-btn');
+  const ttDisconnectBtn = document.getElementById('tt-disconnect-btn');
+  const xAccountNameEl = document.getElementById('x-account-name');
+  const xAccountStatusEl = document.getElementById('x-account-status');
+  const xAvatarEl = document.getElementById('x-avatar');
+  const xConnectBtn = document.getElementById('x-connect-btn');
+  const xRefreshBtn = document.getElementById('x-refresh-btn');
+  const xDisconnectBtn = document.getElementById('x-disconnect-btn');
+  const pubYoutubeEl = document.getElementById('pub-youtube');
+  const pubTiktokEl = document.getElementById('pub-tiktok');
+  const pubXEl = document.getElementById('pub-x');
+  const musicListEl = document.getElementById('music-list');
+  const finalScoreEl = document.getElementById('final-score');
+  const previewVideoEl = document.getElementById('preview-video');
+  const previewLabelEl = document.getElementById('preview-label');
+  const publishAtField = document.getElementById('publish-at-field');
+  const histPublishAtField = document.getElementById('hist-publish-at-field');
+  const tabSetupEl = document.getElementById('tab-setup');
+  const tabHistoryEl = document.getElementById('tab-history');
+  const tabFixturesEl = document.getElementById('tab-fixtures');
+  const tabBtnSetup = document.getElementById('tab-btn-setup');
+  const tabBtnHistory = document.getElementById('tab-btn-history');
+  const tabBtnFixtures = document.getElementById('tab-btn-fixtures');
+  const fixturesDaysEl = document.getElementById('fixtures-days');
+  const fixturesLoadingEl = document.getElementById('fixtures-loading');
+  const fixturesEmptyEl = document.getElementById('fixtures-empty');
+  const fixturesMetaEl = document.getElementById('fixtures-meta');
+  const fixturesRefreshBtn = document.getElementById('fixtures-refresh-btn');
+  const historyCaptionWrap = document.getElementById('history-caption-wrap');
+  const historyCaptionBox = document.getElementById('history-caption-box');
+  const historyCaptionCopy = document.getElementById('history-caption-copy');
+  const historyListEl = document.getElementById('history-list');
+  const historyListViewEl = document.getElementById('history-list-view');
+  const historyDetailEl = document.getElementById('history-detail');
+  const historyLoadingEl = document.getElementById('history-loading');
+  const historyEmptyEl = document.getElementById('history-empty');
+  const historyRefreshBtn = document.getElementById('history-refresh-btn');
+  const historyBackBtn = document.getElementById('history-back-btn');
+  const historyDetailTitleEl = document.getElementById('history-detail-title');
+  const historyDetailMetaEl = document.getElementById('history-detail-meta');
+  const historyPreviewEl = document.getElementById('history-preview');
+  const historyStatusEl = document.getElementById('history-status');
+  const historyDownloadBtn = document.getElementById('history-download-btn');
+  const historyPublishBtn = document.getElementById('history-publish-btn');
+  const historyXManualBtn = document.getElementById('history-x-manual-btn');
+  const histPubYoutubeEl = document.getElementById('hist-pub-youtube');
+  const histPubTiktokEl = document.getElementById('hist-pub-tiktok');
+  const histPubXEl = document.getElementById('hist-pub-x');
+
+  let serverConfig = { youtubeConfigured: false, musicTracks: [] };
+  let youtubeStatus = null;
+  let tiktokStatus = null;
+  let xStatus = null;
+  let pendingBlob = null;
+  let pendingPreviewUrl = null;
+  let selectedMusic = 'none';
+  let finalDownloadUrl = null;
+  let lastSharePayload = { caption: '', title: '', downloadUrl: null, filename: null };
+  let songPreviewAudio = null;
+  let playingSongName = null;
+  let historyItems = [];
+  let selectedHistoryItem = null;
+
+  // Audio: SFX mixed into the recorded stream
+  let audioCtx = null;
+  let audioDest = null;
+  let sfxBuffers = { hit: null, cheer: null };
+  let lastHitSoundAt = 0;
+
+  // Portrait Resolution for Recording
+  const LOGICAL_WIDTH = 1080;
+  const LOGICAL_HEIGHT = 1920;
+  const CENTER_X = LOGICAL_WIDTH / 2;
+  const CENTER_Y = LOGICAL_HEIGHT / 2;
+  const PITCH_RADIUS = 460;
+  const PUCK_RADIUS = 40;
+  
+  // Scale canvas context to handle high-res physical pixels if needed,
+  // but for MediaRecorder 1080x1920 is exactly what we want physically.
+  canvas.width = LOGICAL_WIDTH;
+  canvas.height = LOGICAL_HEIGHT;
+
+  let animationRef;
+  let lastTime = 0;
+  
+  let mediaRecorder;
+  let recordedChunks = [];
+  
+  // Game State
+  let simTime = 0; // 0 to 90
+  const MAX_SIM_TIME = 90;
+  const MATCH_DURATION_MS = 45000; // Exact 45 seconds real-time for 90 mins
+  let isPlaying = false;
+  let scoreTeam1 = 0;
+  let scoreTeam2 = 0;
+  let goals = [];
+  let pucks = [];
+  let flashAlpha = 0;
+
+  // Teams Default configuration
+  const TEAMS = [
+    { color: '#00f3ff', label: 'PSG', fullName: 'Paris Saint-Germain', id: 'team1', img: new Image(), imgLoaded: false, logoDraw: null, clubId: null, logoSrc: null },
+    { color: '#ff003c', label: 'INT', fullName: 'Inter', id: 'team2', img: new Image(), imgLoaded: false, logoDraw: null, clubId: null, logoSrc: null }
+  ];
+
+  let clubsCatalog = { clubs: [], leagues: [] };
+
+  const t1ClubEl = document.getElementById('t1-club');
+  const t2ClubEl = document.getElementById('t2-club');
+  const t1CustomEl = document.getElementById('t1-custom');
+  const t2CustomEl = document.getElementById('t2-custom');
+  const t1PreviewEl = document.getElementById('t1-preview');
+  const t2PreviewEl = document.getElementById('t2-preview');
+
+  /** Offscreen: fix dark-only crests + knock out flat PNG pads for non-circular logos */
+  function processClubLogoImage(img) {
+    try {
+      const w = img.naturalWidth || img.width;
+      const h = img.naturalHeight || img.height;
+      if (!w || !h) return img;
+      const c = document.createElement('canvas');
+      c.width = w;
+      c.height = h;
+      const x = c.getContext('2d', { willReadFrequently: true });
+      x.clearRect(0, 0, w, h);
+      x.drawImage(img, 0, 0);
+      const imageData = x.getImageData(0, 0, w, h);
+      const d = imageData.data;
+      let opaque = 0;
+      let black = 0;
+      let white = 0;
+      for (let i = 0; i < d.length; i += 4) {
+        const a = d[i + 3];
+        if (a < 12) continue;
+        opaque++;
+        const r = d[i];
+        const g = d[i + 1];
+        const b = d[i + 2];
+        if (r > 240 && g > 240 && b > 240) white++;
+        if (r < 28 && g < 28 && b < 28) black++;
+      }
+      if (!opaque) return img;
+
+      // Black-only marks (Juventus “J”, etc.) vanish on our dark pucks —
+      // recolor opaque black → white so the crest reads cleanly with no pad/background.
+      const isBlackSilhouette = black / opaque > 0.8 && white / opaque < 0.05;
+      if (isBlackSilhouette) {
+        for (let i = 0; i < d.length; i += 4) {
+          if (d[i + 3] < 12) continue;
+          if (d[i] < 40 && d[i + 1] < 40 && d[i + 2] < 40) {
+            d[i] = 255;
+            d[i + 1] = 255;
+            d[i + 2] = 255;
+          }
+        }
+        x.putImageData(imageData, 0, 0);
+        return c;
+      }
+
+      // Soft-knockout near-white / near-black edge backgrounds (non-circular PNG pads)
+      const corners = [
+        [0, 0],
+        [w - 1, 0],
+        [0, h - 1],
+        [w - 1, h - 1],
+      ].map(([cx, cy]) => {
+        const i = (cy * w + cx) * 4;
+        return { r: d[i], g: d[i + 1], b: d[i + 2], a: d[i + 3] };
+      });
+      const solidCorners = corners.filter((c0) => c0.a > 200);
+      if (solidCorners.length >= 3) {
+        const avg = solidCorners.reduce(
+          (acc, c0) => ({
+            r: acc.r + c0.r,
+            g: acc.g + c0.g,
+            b: acc.b + c0.b,
+          }),
+          { r: 0, g: 0, b: 0 }
+        );
+        avg.r /= solidCorners.length;
+        avg.g /= solidCorners.length;
+        avg.b /= solidCorners.length;
+        const isFlatBg =
+          (avg.r > 245 && avg.g > 245 && avg.b > 245) ||
+          (avg.r < 18 && avg.g < 18 && avg.b < 18);
+        if (isFlatBg) {
+          const thr = avg.r > 200 ? 28 : 22;
+          for (let i = 0; i < d.length; i += 4) {
+            if (d[i + 3] < 12) continue;
+            const dr = Math.abs(d[i] - avg.r);
+            const dg = Math.abs(d[i + 1] - avg.g);
+            const db = Math.abs(d[i + 2] - avg.b);
+            if (dr < thr && dg < thr && db < thr) d[i + 3] = 0;
+          }
+          x.putImageData(imageData, 0, 0);
+          return c;
+        }
+      }
+      return img;
+    } catch {
+      return img;
+    }
+  }
+
+  function setTeamLogo(teamIndex, src) {
+    const team = TEAMS[teamIndex];
+    const preview = teamIndex === 0 ? t1PreviewEl : t2PreviewEl;
+
+    return new Promise((resolve) => {
+      if (!src) {
+        team.imgLoaded = false;
+        team.logoSrc = null;
+        team.logoDraw = null;
+        team.img.removeAttribute('src');
+        preview.removeAttribute('src');
+        resolve();
+        return;
+      }
+
+      let absolute = src;
+      try {
+        absolute = new URL(src, window.location.href).href;
+      } catch {
+        /* keep src */
+      }
+
+      // Already loaded — don't reload (avoids brief fallback / blank frames)
+      if (
+        team.logoSrc === src &&
+        team.img.complete &&
+        team.img.naturalWidth > 0 &&
+        team.img.src === absolute &&
+        team.logoDraw
+      ) {
+        team.imgLoaded = true;
+        preview.src = src;
+        resolve();
+        return;
+      }
+
+      team.imgLoaded = false;
+      team.logoSrc = src;
+      team.logoDraw = null;
+      let settled = false;
+      const finish = (ok) => {
+        if (settled) return;
+        settled = true;
+        if (ok && team.img.naturalWidth > 0) {
+          team.logoDraw = processClubLogoImage(team.img);
+          team.imgLoaded = true;
+        } else {
+          team.imgLoaded = false;
+        }
+        resolve();
+      };
+      team.img.onload = () => finish(true);
+      team.img.onerror = () => finish(false);
+      team.img.crossOrigin = 'anonymous';
+      team.img.src = src;
+      preview.src = src;
+
+      if (team.img.complete && team.img.naturalWidth > 0) {
+        finish(true);
+      }
+    });
+  }
+
+  function fillClubSelect(selectEl, preferredId) {
+    selectEl.innerHTML = '';
+    const customOpt = document.createElement('option');
+    customOpt.value = '__custom__';
+    customOpt.textContent = '+ Custom club…';
+    selectEl.appendChild(customOpt);
+
+    const byLeague = new Map();
+    for (const club of clubsCatalog.clubs || []) {
+      if (!byLeague.has(club.league)) byLeague.set(club.league, []);
+      byLeague.get(club.league).push(club);
+    }
+    for (const [league, clubs] of byLeague) {
+      const group = document.createElement('optgroup');
+      group.label = league;
+      for (const club of clubs) {
+        const opt = document.createElement('option');
+        opt.value = club.id;
+        opt.textContent = `${club.name} (${club.short})`;
+        group.appendChild(opt);
+      }
+      selectEl.appendChild(group);
+    }
+
+    if (preferredId && [...selectEl.options].some((o) => o.value === preferredId)) {
+      selectEl.value = preferredId;
+    } else {
+      const psg = (clubsCatalog.clubs || []).find((c) => /paris saint-germain/i.test(c.name));
+      const inter = (clubsCatalog.clubs || []).find((c) => /^inter$/i.test(c.name) || /inter milan/i.test(c.name));
+      if (selectEl === t1ClubEl && psg) selectEl.value = psg.id;
+      else if (selectEl === t2ClubEl && inter) selectEl.value = inter.id;
+      else if (selectEl.options.length > 1) selectEl.selectedIndex = 1;
+    }
+  }
+
+  async function applyClubSelection(teamIndex, { syncColor = false } = {}) {
+    const selectEl = teamIndex === 0 ? t1ClubEl : t2ClubEl;
+    const customWrap = teamIndex === 0 ? t1CustomEl : t2CustomEl;
+    const colorEl = document.getElementById(teamIndex === 0 ? 't1-color' : 't2-color');
+    const nameEl = document.getElementById(teamIndex === 0 ? 't1-name' : 't2-name');
+    const value = selectEl.value;
+    const isCustom = value === '__custom__';
+    customWrap.style.display = isCustom ? 'block' : 'none';
+
+    if (isCustom) {
+      TEAMS[teamIndex].clubId = null;
+      TEAMS[teamIndex].label = (nameEl.value || `T${teamIndex + 1}`).slice(0, 5).toUpperCase();
+      TEAMS[teamIndex].fullName = nameEl.value || TEAMS[teamIndex].label;
+      TEAMS[teamIndex].color = colorEl.value;
+      return;
+    }
+
+    const club = (clubsCatalog.clubs || []).find((c) => c.id === value);
+    if (!club) return;
+    TEAMS[teamIndex].clubId = club.id;
+    TEAMS[teamIndex].label = String(club.short || club.name).slice(0, 5).toUpperCase();
+    TEAMS[teamIndex].fullName = club.name;
+    // Only push club default into the picker when the club changes — never overwrite a user color on Start
+    if (syncColor) {
+      const next = club.color || colorEl.value;
+      TEAMS[teamIndex].color = next;
+      colorEl.value = next;
+    } else {
+      TEAMS[teamIndex].color = colorEl.value;
+    }
+    nameEl.value = TEAMS[teamIndex].label;
+    await setTeamLogo(teamIndex, club.logo);
+  }
+
+  async function loadClubsCatalog() {
+    try {
+      const res = await fetch('/api/clubs');
+      const data = await res.json();
+      if (data.ok) clubsCatalog = data;
+    } catch {
+      clubsCatalog = { clubs: [], leagues: [] };
+    }
+    fillClubSelect(t1ClubEl, 'ligue-1-paris-saint-germain');
+    fillClubSelect(t2ClubEl, 'serie-a-inter');
+    const psg = (clubsCatalog.clubs || []).find((c) => /paris saint-germain/i.test(c.name));
+    const inter = (clubsCatalog.clubs || []).find((c) => /^inter$/i.test(c.name) || /inter milan/i.test(c.name));
+    if (psg) t1ClubEl.value = psg.id;
+    if (inter) t2ClubEl.value = inter.id;
+    await Promise.all([
+      applyClubSelection(0, { syncColor: true }),
+      applyClubSelection(1, { syncColor: true }),
+    ]);
+    draw();
+  }
+
+  t1ClubEl.addEventListener('change', () => {
+    applyClubSelection(0, { syncColor: true }).then(() => draw());
+  });
+  t2ClubEl.addEventListener('change', () => {
+    applyClubSelection(1, { syncColor: true }).then(() => draw());
+  });
+  document.getElementById('t1-color').addEventListener('input', () => {
+    TEAMS[0].color = document.getElementById('t1-color').value;
+    draw();
+  });
+  document.getElementById('t2-color').addEventListener('input', () => {
+    TEAMS[1].color = document.getElementById('t2-color').value;
+    draw();
+  });
+  document.getElementById('t1-name').addEventListener('input', () => {
+    if (t1ClubEl.value === '__custom__') {
+      TEAMS[0].label = (document.getElementById('t1-name').value || 'T1').slice(0, 5).toUpperCase();
+      TEAMS[0].fullName = document.getElementById('t1-name').value || TEAMS[0].label;
+    }
+  });
+  document.getElementById('t2-name').addEventListener('input', () => {
+    if (t2ClubEl.value === '__custom__') {
+      TEAMS[1].label = (document.getElementById('t2-name').value || 'T2').slice(0, 5).toUpperCase();
+      TEAMS[1].fullName = document.getElementById('t2-name').value || TEAMS[1].label;
+    }
+  });
+
+  // File Inputs
+  document.getElementById('t1-logo').addEventListener('change', (e) => handleImageUpload(e, 0));
+  document.getElementById('t2-logo').addEventListener('change', (e) => handleImageUpload(e, 1));
+  
+  function handleImageUpload(e, teamIndex) {
+    const file = e.target.files[0];
+    if(file) {
+      const url = URL.createObjectURL(file);
+      setTeamLogo(teamIndex, url).then(() => draw());
+    }
+  }
+
+  async function applySettings() {
+    // Preserve neon colors from the pickers (do not re-sync club defaults)
+    await Promise.all([applyClubSelection(0), applyClubSelection(1)]);
+    TEAMS[0].color = document.getElementById('t1-color').value;
+    TEAMS[1].color = document.getElementById('t2-color').value;
+    if (t1ClubEl.value === '__custom__') {
+      TEAMS[0].label = (document.getElementById('t1-name').value || 'T1').slice(0, 5).toUpperCase();
+      TEAMS[0].fullName = document.getElementById('t1-name').value || TEAMS[0].label;
+    }
+    if (t2ClubEl.value === '__custom__') {
+      TEAMS[1].label = (document.getElementById('t2-name').value || 'T2').slice(0, 5).toUpperCase();
+      TEAMS[1].fullName = document.getElementById('t2-name').value || TEAMS[1].label;
+    }
+  }
+
+  async function ensureTeamLogosReady() {
+    await Promise.all(
+      TEAMS.map(
+        (team) =>
+          new Promise((resolve) => {
+            if (team.img.complete && team.img.naturalWidth > 0) {
+              team.imgLoaded = true;
+              resolve();
+              return;
+            }
+            if (!team.logoSrc && !team.img.src) {
+              resolve();
+              return;
+            }
+            const done = () => {
+              team.imgLoaded = team.img.naturalWidth > 0;
+              resolve();
+            };
+            team.img.addEventListener('load', done, { once: true });
+            team.img.addEventListener('error', done, { once: true });
+          })
+      )
+    );
+  }
+
+  function waitAnimationFrames(count = 2) {
+    return new Promise((resolve) => {
+      let left = count;
+      const step = () => {
+        left -= 1;
+        if (left <= 0) resolve();
+        else requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  async function ensureAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      audioDest = audioCtx.createMediaStreamDestination();
+    }
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+    if (!sfxBuffers.hit || !sfxBuffers.cheer) {
+      await loadSfxBuffers();
+    }
+    return audioCtx;
+  }
+
+  async function loadSfxBuffers() {
+    const loadOne = async (url) => {
+      const res = await fetch(url);
+      const arr = await res.arrayBuffer();
+      return audioCtx.decodeAudioData(arr.slice(0));
+    };
+    try {
+      sfxBuffers.hit = await loadOne('/sounds/hit_vibration.wav');
+      sfxBuffers.cheer = await loadOne('/sounds/cheers.mp3');
+    } catch (err) {
+      console.warn('SFX load failed, using synth fallback:', err);
+    }
+  }
+
+  function playBuffer(buffer, durationSec, gainValue = 1, playbackRate = 1) {
+    if (!audioCtx || !audioDest || !buffer) return;
+    const src = audioCtx.createBufferSource();
+    src.buffer = buffer;
+    src.playbackRate.value = playbackRate;
+    const gain = audioCtx.createGain();
+    gain.gain.value = gainValue;
+    src.connect(gain);
+    gain.connect(audioDest);
+    gain.connect(audioCtx.destination); // hear live while recording
+    const wallDur =
+      durationSec != null
+        ? Math.min(durationSec, buffer.duration / playbackRate)
+        : buffer.duration / playbackRate;
+    src.start(0);
+    src.stop(audioCtx.currentTime + wallDur);
+  }
+
+  function playSynthVibration(durationSec = 0.5) {
+    if (!audioCtx || !audioDest) return;
+    const now = audioCtx.currentTime;
+    const frames = Math.floor(audioCtx.sampleRate * durationSec);
+    const buffer = audioCtx.createBuffer(1, frames, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < frames; i++) {
+      const t = i / audioCtx.sampleRate;
+      // brownian rumble with pulse envelope (haptic feel)
+      last = (last + (Math.random() * 2 - 1) * 0.08) * 0.96;
+      const env = Math.exp(-t * 6) * (0.55 + 0.45 * Math.sin(t * Math.PI * 28));
+      data[i] = last * env * 3.2;
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buffer;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 160;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.35;
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioDest);
+    gain.connect(audioCtx.destination);
+    src.start(now);
+  }
+
+  function playSynthCheer(durationSec = 2) {
+    if (!audioCtx || !audioDest) return;
+    const now = audioCtx.currentTime;
+    const frames = Math.floor(audioCtx.sampleRate * durationSec);
+    const buffer = audioCtx.createBuffer(1, frames, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < frames; i++) {
+      const t = i / audioCtx.sampleRate;
+      const env =
+        Math.min(1, t / 0.1) *
+        Math.max(0, 1 - Math.max(0, t - 1.25) / 0.75);
+      // layered crowd roar
+      const roar =
+        (Math.random() * 2 - 1) * 0.45 +
+        Math.sin(t * 220 + Math.random()) * 0.08 +
+        Math.sin(t * 440) * 0.04;
+      const flutter =
+        0.6 +
+        0.4 * Math.sin(t * 14) * Math.sin(t * 5.5) +
+        0.15 * Math.sin(t * 37);
+      data[i] = roar * env * flutter;
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buffer;
+    const hip = audioCtx.createBiquadFilter();
+    hip.type = 'bandpass';
+    hip.frequency.value = 1100;
+    hip.Q.value = 0.55;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.9;
+    src.connect(hip);
+    hip.connect(gain);
+    gain.connect(audioDest);
+    gain.connect(audioCtx.destination);
+    src.start(now);
+  }
+
+  function playHitSound() {
+    const now = performance.now();
+    if (now - lastHitSoundAt < 80) return;
+    lastHitSoundAt = now;
+    if (sfxBuffers.hit) playBuffer(sfxBuffers.hit, 0.5, 0.275);
+    else playSynthVibration(0.5);
+  }
+
+  function playGoalSound() {
+    // First 2 seconds of cheers.mp3 at normal speed
+    if (sfxBuffers.cheer) playBuffer(sfxBuffers.cheer, 2, 0.675, 1);
+    else playSynthCheer(2);
+  }
+
+  function startRecording() {
+    recordedChunks = [];
+    const canvasStream = canvas.captureStream(60);
+    const tracks = [...canvasStream.getVideoTracks()];
+    if (audioDest && audioDest.stream.getAudioTracks().length) {
+      tracks.push(...audioDest.stream.getAudioTracks());
+    }
+    const stream = new MediaStream(tracks);
+    
+    let options = { mimeType: 'video/webm; codecs=vp9,opus' };
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      options = { mimeType: 'video/webm; codecs=vp9' };
+    }
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      options = { mimeType: 'video/webm' };
+    }
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      options = {};
+    }
+    
+    try {
+      mediaRecorder = new MediaRecorder(stream, options);
+    } catch(e) {
+      console.warn("MediaRecorder issue:", e);
+      return;
+    }
+    
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) {
+        recordedChunks.push(e.data);
+      }
+    };
+    
+    mediaRecorder.onstop = () => {
+      pendingBlob = new Blob(recordedChunks, { type: 'video/webm' });
+      onRecordingReady();
+    };
+    
+    mediaRecorder.start();
+  }
+
+  function stopRecording() {
+    if(mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+  }
+
+  function setUploadStatus(message, type) {
+    uploadStatusEl.textContent = '';
+    uploadStatusEl.className = type || '';
+    if (type === 'error') {
+      uploadStatusEl.textContent = message;
+      return;
+    }
+    if (message.includes('http')) {
+      const parts = message.split(/(https?:\/\/[^\s]+)/);
+      parts.forEach((part) => {
+        if (/^https?:\/\//.test(part)) {
+          const link = document.createElement('a');
+          link.href = part;
+          link.target = '_blank';
+          link.rel = 'noopener';
+          link.textContent = part;
+          uploadStatusEl.appendChild(link);
+        } else if (part) {
+          uploadStatusEl.appendChild(document.createTextNode(part));
+        }
+      });
+      return;
+    }
+    uploadStatusEl.textContent = message;
+  }
+
+  function appendPlatformCard(parent, name, bodyNodes, ok) {
+    const card = document.createElement('div');
+    card.className = `upload-platform ${ok ? 'ok' : 'err'}`;
+    const label = document.createElement('div');
+    label.className = 'upload-platform-name';
+    label.textContent = name;
+    const body = document.createElement('div');
+    body.className = 'upload-platform-body';
+    bodyNodes.forEach((n) => body.appendChild(n));
+    card.appendChild(label);
+    card.appendChild(body);
+    parent.appendChild(card);
+  }
+
+  function textNode(str) {
+    return document.createTextNode(str);
+  }
+
+  function linkNode(url, label) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = label || url;
+    return a;
+  }
+
+  function renderUploadResult(data) {
+    uploadStatusEl.textContent = '';
+    const hasFail = Boolean(data.youtubeError || data.tiktokError || data.xError);
+    uploadStatusEl.className = hasFail ? 'error' : 'success';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'upload-summary';
+
+    const head = document.createElement('div');
+    head.className = 'upload-summary-head';
+    head.textContent = 'MP4 ready';
+    wrap.appendChild(head);
+
+    const meta = document.createElement('div');
+    meta.className = 'upload-summary-meta';
+    const metaBits = [];
+    if (data.music) metaBits.push(`Music: ${data.music}`);
+    if (data.metadata?.title) metaBits.push(`Title: “${data.metadata.title}”`);
+    if (data.metadata?.source === 'gemini') metaBits.push('Source: AI');
+    else if (data.metadata?.source === 'fallback') metaBits.push('Source: local templates');
+    meta.textContent = metaBits.join('\n');
+    wrap.appendChild(meta);
+
+    if (data.youtube?.url || data.youtubeError) {
+      const nodes = [];
+      if (data.youtube?.url) {
+        if (data.youtube.publishAt) {
+          nodes.push(
+            textNode(`Scheduled ${new Date(data.youtube.publishAt).toLocaleString()}\n`)
+          );
+        }
+        nodes.push(linkNode(data.youtube.url));
+      } else {
+        nodes.push(textNode(data.youtubeError));
+      }
+      appendPlatformCard(wrap, 'YouTube', nodes, Boolean(data.youtube?.url));
+    }
+
+    if (data.tiktok || data.tiktokError) {
+      const nodes = [];
+      if (data.tiktokError) {
+        nodes.push(textNode(data.tiktokError));
+      } else {
+        nodes.push(textNode(data.tiktok.message || 'Upload started'));
+        const caption =
+          data.tiktok.caption || data.metadata?.caption || data.metadata?.title || '';
+        if (data.tiktok.mode === 'inbox' || data.tiktok.titleApplied === false) {
+          if (caption) {
+            const tip = document.createElement('div');
+            tip.style.marginTop = '6px';
+            tip.style.color = '#fbbf24';
+            tip.textContent =
+              'Inbox drafts do not get an API caption. Copy this into TikTok:';
+            nodes.push(tip);
+            const box = document.createElement('div');
+            box.className = 'upload-caption-box';
+            box.textContent = caption;
+            nodes.push(box);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'yt-btn upload-copy-btn';
+            btn.textContent = 'Copy caption';
+            btn.addEventListener('click', async () => {
+              try {
+                await navigator.clipboard.writeText(caption);
+                btn.textContent = 'Copied';
+                setTimeout(() => {
+                  btn.textContent = 'Copy caption';
+                }, 1200);
+              } catch {
+                btn.textContent = 'Copy failed';
+              }
+            });
+            nodes.push(btn);
+          }
+        } else if (caption) {
+          const box = document.createElement('div');
+          box.className = 'upload-caption-box';
+          box.textContent = `Caption: ${caption}`;
+          nodes.push(box);
+        }
+      }
+      appendPlatformCard(wrap, 'TikTok', nodes, !data.tiktokError);
+    }
+
+    if (data.x?.url || data.xError) {
+      const nodes = [];
+      if (data.x?.url) nodes.push(linkNode(data.x.url));
+      else {
+        nodes.push(textNode(data.xError));
+        if (/credits? depleted/i.test(String(data.xError || ''))) {
+          const tip = document.createElement('div');
+          tip.style.marginTop = '6px';
+          tip.style.color = '#fbbf24';
+          tip.textContent =
+            'API credits are empty. Use “Share to X (manual)” below — no API credits needed.';
+          nodes.push(tip);
+        }
+      }
+      appendPlatformCard(wrap, 'X', nodes, Boolean(data.x?.url));
+    }
+
+    if (
+      !data.youtube &&
+      !data.youtubeError &&
+      !data.tiktok &&
+      !data.tiktokError &&
+      !data.x &&
+      !data.xError
+    ) {
+      const note = document.createElement('div');
+      note.className = 'upload-summary-meta';
+      note.textContent = 'No social publish selected.';
+      wrap.appendChild(note);
+    }
+
+    uploadStatusEl.appendChild(wrap);
+  }
+
+  function downloadRecording(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = filename || `ucl_match_${TEAMS[0].label}_vs_${TEAMS[1].label}_${scoreTeam1}-${scoreTeam2}.webm`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function stopSongPreview() {
+    if (songPreviewAudio) {
+      songPreviewAudio.pause();
+      songPreviewAudio.src = '';
+      songPreviewAudio = null;
+    }
+    playingSongName = null;
+    musicListEl.querySelectorAll('.preview-song-btn').forEach((btn) => {
+      btn.classList.remove('playing');
+      btn.textContent = 'Play';
+    });
+  }
+
+  function setPreviewSource(url, label) {
+    if (pendingPreviewUrl && pendingPreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(pendingPreviewUrl);
+      pendingPreviewUrl = null;
+    }
+    previewLabelEl.textContent = label || 'Match preview';
+    previewVideoEl.pause();
+    previewVideoEl.removeAttribute('src');
+    previewVideoEl.load();
+    if (url) {
+      if (url.startsWith('blob:')) pendingPreviewUrl = url;
+      previewVideoEl.src = url;
+      previewVideoEl.load();
+    }
+  }
+
+  function showDownloadButton(url) {
+    finalDownloadUrl = url;
+    lastSharePayload.downloadUrl = url || null;
+    if (url) {
+      downloadBtn.style.display = 'block';
+      downloadBtn.disabled = false;
+      xManualBtn.style.display = 'block';
+      xManualBtn.disabled = false;
+    } else {
+      downloadBtn.style.display = 'none';
+      downloadBtn.disabled = true;
+      xManualBtn.style.display = 'none';
+      xManualBtn.disabled = true;
+    }
+  }
+
+  async function shareToXManual() {
+    const caption = (
+      lastSharePayload.caption ||
+      lastSharePayload.title ||
+      `${TEAMS[0].fullName || TEAMS[0].label} vs ${TEAMS[1].fullName || TEAMS[1].label} #Football #Shorts`
+    ).slice(0, 270);
+    const url = lastSharePayload.downloadUrl || finalDownloadUrl;
+    if (!url) {
+      setUploadStatus('Generate an MP4 first, then use Share to X (manual).', 'error');
+      return;
+    }
+    xManualBtn.disabled = true;
+    try {
+      try {
+        await navigator.clipboard.writeText(caption);
+      } catch {
+        /* clipboard may be blocked */
+      }
+      const name =
+        lastSharePayload.filename ||
+        `ucl_match_${TEAMS[0].label}_vs_${TEAMS[1].label}_${scoreTeam1}-${scoreTeam2}.mp4`;
+      await downloadMp4FromUrl(url, name);
+      // Prefills caption in X/Twitter compose — user only attaches the downloaded video
+      const intent = `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption)}`;
+      window.open(intent, '_blank', 'noopener');
+      setUploadStatus(
+        `X opened with caption filled. Attach the downloaded MP4 in the composer, then post.`,
+        'success'
+      );
+    } catch (err) {
+      setUploadStatus(`X manual share failed: ${err.message}`, 'error');
+    } finally {
+      xManualBtn.disabled = false;
+    }
+  }
+
+  function renderMusicList(tracks) {
+    stopSongPreview();
+    musicListEl.innerHTML = '';
+    const options = [
+      { name: 'none', label: 'No background music', url: null },
+      ...(tracks || []).map((t) => ({
+        name: t.name,
+        label: t.name.replace(/\.[^.]+$/, ''),
+        url: t.url || `/music/${encodeURIComponent(t.name)}`,
+      })),
+    ];
+    // Prefer first real track if nothing valid selected yet
+    if (!options.find((o) => o.name === selectedMusic)) {
+      selectedMusic = options.length > 1 ? options[1].name : options[0].name;
+    }
+    options.forEach((opt) => {
+      const row = document.createElement('div');
+      row.className = 'music-option' + (opt.name === selectedMusic ? ' selected' : '');
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'bg-music';
+      input.value = opt.name;
+      input.checked = opt.name === selectedMusic;
+      input.addEventListener('change', () => {
+        selectedMusic = opt.name;
+        musicListEl.querySelectorAll('.music-option').forEach((el) => el.classList.remove('selected'));
+        row.classList.add('selected');
+      });
+
+      const span = document.createElement('span');
+      span.className = 'track-name';
+      span.textContent = opt.label;
+
+      row.appendChild(input);
+      row.appendChild(span);
+
+      if (opt.url) {
+        const playBtn = document.createElement('button');
+        playBtn.type = 'button';
+        playBtn.className = 'preview-song-btn';
+        playBtn.textContent = 'Play';
+        playBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          // Previewing a track also selects it for the export
+          selectedMusic = opt.name;
+          input.checked = true;
+          musicListEl.querySelectorAll('.music-option').forEach((el) => el.classList.remove('selected'));
+          row.classList.add('selected');
+
+          if (playingSongName === opt.name && songPreviewAudio && !songPreviewAudio.paused) {
+            stopSongPreview();
+            return;
+          }
+          stopSongPreview();
+          songPreviewAudio = new Audio(opt.url);
+          songPreviewAudio.volume = 0.7;
+          playingSongName = opt.name;
+          playBtn.classList.add('playing');
+          playBtn.textContent = 'Stop';
+          songPreviewAudio.play().catch((err) => {
+            console.warn('Song preview failed:', err);
+            stopSongPreview();
+          });
+          songPreviewAudio.onended = () => stopSongPreview();
+        });
+        row.appendChild(playBtn);
+      }
+
+      row.addEventListener('click', (e) => {
+        if (e.target === input || e.target.classList.contains('preview-song-btn')) return;
+        input.checked = true;
+        input.dispatchEvent(new Event('change'));
+      });
+
+      musicListEl.appendChild(row);
+    });
+  }
+
+  function onRecordingReady() {
+    finalScoreEl.textContent = `${TEAMS[0].label} ${scoreTeam1} — ${scoreTeam2} ${TEAMS[1].label}`;
+    // Default to first song in folder so export has music unless user picks "none"
+    if (serverConfig.musicTracks?.length && selectedMusic === 'none') {
+      selectedMusic = serverConfig.musicTracks[0].name;
+    }
+    renderMusicList(serverConfig.musicTracks || []);
+    setDefaultPublishAt();
+    const previewUrl = URL.createObjectURL(pendingBlob);
+    setPreviewSource(previewUrl, 'Recording preview');
+    showDownloadButton(null);
+    generateBtn.disabled = false;
+    setUploadStatus('Preview, pick music, set schedule, then generate MP4.');
+  }
+
+  function toDatetimeLocalValue(date) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function formatScheduleLabel(date) {
+    return date.toLocaleString(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  function createModernDateTimePicker(mountEl, { optional = false } = {}) {
+    const root = mountEl;
+    root.innerHTML = `
+      <button type="button" class="dt-trigger" aria-expanded="false">
+        <span class="dt-trigger-label placeholder">${optional ? 'No schedule selected' : 'Pick date & time'}</span>
+        <span class="dt-trigger-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="5" width="18" height="16" rx="3"></rect>
+            <path d="M3 10h18M8 3v4M16 3v4"></path>
+          </svg>
+        </span>
+      </button>
+      <div class="dt-panel" role="dialog">
+        <div class="dt-month-row">
+          <button type="button" class="dt-nav dt-prev" aria-label="Previous month">‹</button>
+          <div class="dt-month-label"></div>
+          <button type="button" class="dt-nav dt-next" aria-label="Next month">›</button>
+        </div>
+        <div class="dt-weekdays">
+          <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+        </div>
+        <div class="dt-grid"></div>
+        <div class="dt-time-row">
+          <div class="dt-time-group">
+            <label>Hour</label>
+            <select class="dt-hour"></select>
+          </div>
+          <div class="dt-time-group">
+            <label>Minute</label>
+            <select class="dt-minute"></select>
+          </div>
+        </div>
+        <div class="dt-footer">
+          ${optional ? '<button type="button" class="yt-btn dt-clear">Clear</button>' : ''}
+          <button type="button" class="yt-btn primary dt-done">Done</button>
+        </div>
+      </div>
+    `;
+
+    const trigger = root.querySelector('.dt-trigger');
+    const labelEl = root.querySelector('.dt-trigger-label');
+    const panel = root.querySelector('.dt-panel');
+    const monthLabel = root.querySelector('.dt-month-label');
+    const grid = root.querySelector('.dt-grid');
+    const hourSel = root.querySelector('.dt-hour');
+    const minuteSel = root.querySelector('.dt-minute');
+    const prevBtn = root.querySelector('.dt-prev');
+    const nextBtn = root.querySelector('.dt-next');
+    const doneBtn = root.querySelector('.dt-done');
+    const clearBtn = root.querySelector('.dt-clear');
+
+    for (let h = 0; h < 24; h++) {
+      const opt = document.createElement('option');
+      opt.value = String(h);
+      opt.textContent = String(h).padStart(2, '0');
+      hourSel.appendChild(opt);
+    }
+    for (let m = 0; m < 60; m += 5) {
+      const opt = document.createElement('option');
+      opt.value = String(m);
+      opt.textContent = String(m).padStart(2, '0');
+      minuteSel.appendChild(opt);
+    }
+
+    let selected = null;
+    let viewYear;
+    let viewMonth;
+    let minDate = null;
+
+    function syncTimeSelects(date) {
+      hourSel.value = String(date.getHours());
+      const rounded = Math.round(date.getMinutes() / 5) * 5;
+      minuteSel.value = String(Math.min(55, rounded));
+    }
+
+    function currentDraft() {
+      const base = selected ? new Date(selected) : new Date();
+      base.setHours(Number(hourSel.value), Number(minuteSel.value), 0, 0);
+      return base;
+    }
+
+    function updateTrigger() {
+      if (!selected) {
+        labelEl.textContent = optional ? 'No schedule selected' : 'Pick date & time';
+        labelEl.classList.add('placeholder');
+        return;
+      }
+      labelEl.textContent = formatScheduleLabel(selected);
+      labelEl.classList.remove('placeholder');
+    }
+
+    function render() {
+      monthLabel.textContent = new Date(viewYear, viewMonth, 1).toLocaleString(undefined, {
+        month: 'long',
+        year: 'numeric',
+      });
+      grid.innerHTML = '';
+      const first = new Date(viewYear, viewMonth, 1);
+      const startPad = (first.getDay() + 6) % 7; // Monday-first
+      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+      const prevDays = new Date(viewYear, viewMonth, 0).getDate();
+      const today = new Date();
+      const totalCells = 42;
+
+      for (let i = 0; i < totalCells; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'dt-day';
+        let y = viewYear;
+        let m = viewMonth;
+        let d;
+        if (i < startPad) {
+          d = prevDays - startPad + i + 1;
+          m -= 1;
+          if (m < 0) {
+            m = 11;
+            y -= 1;
+          }
+          btn.classList.add('muted');
+        } else if (i >= startPad + daysInMonth) {
+          d = i - (startPad + daysInMonth) + 1;
+          m += 1;
+          if (m > 11) {
+            m = 0;
+            y += 1;
+          }
+          btn.classList.add('muted');
+        } else {
+          d = i - startPad + 1;
+        }
+
+        const cellDate = new Date(y, m, d, Number(hourSel.value), Number(minuteSel.value), 0, 0);
+        btn.textContent = String(d);
+        if (
+          today.getFullYear() === y &&
+          today.getMonth() === m &&
+          today.getDate() === d
+        ) {
+          btn.classList.add('today');
+        }
+        if (
+          selected &&
+          selected.getFullYear() === y &&
+          selected.getMonth() === m &&
+          selected.getDate() === d
+        ) {
+          btn.classList.add('selected');
+        }
+        if (minDate) {
+          const dayEnd = new Date(y, m, d, 23, 59, 59, 999);
+          if (dayEnd < minDate) btn.disabled = true;
+        }
+        btn.addEventListener('click', () => {
+          selected = cellDate;
+          viewYear = y;
+          viewMonth = m;
+          updateTrigger();
+          render();
+        });
+        grid.appendChild(btn);
+      }
+    }
+
+    function open() {
+      document.querySelectorAll('.dt-panel.open').forEach((p) => {
+        if (p !== panel) p.classList.remove('open');
+      });
+      document.querySelectorAll('.dt-trigger.open').forEach((t) => {
+        if (t !== trigger) t.classList.remove('open');
+      });
+      panel.classList.add('open');
+      trigger.classList.add('open');
+      trigger.setAttribute('aria-expanded', 'true');
+      render();
+    }
+
+    function close() {
+      panel.classList.remove('open');
+      trigger.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (panel.classList.contains('open')) close();
+      else open();
+    });
+    panel.addEventListener('click', (e) => e.stopPropagation());
+    prevBtn.addEventListener('click', () => {
+      viewMonth -= 1;
+      if (viewMonth < 0) {
+        viewMonth = 11;
+        viewYear -= 1;
+      }
+      render();
+    });
+    nextBtn.addEventListener('click', () => {
+      viewMonth += 1;
+      if (viewMonth > 11) {
+        viewMonth = 0;
+        viewYear += 1;
+      }
+      render();
+    });
+    hourSel.addEventListener('change', () => {
+      if (selected) {
+        selected.setHours(Number(hourSel.value));
+        updateTrigger();
+      }
+    });
+    minuteSel.addEventListener('change', () => {
+      if (selected) {
+        selected.setMinutes(Number(minuteSel.value));
+        updateTrigger();
+      }
+    });
+    doneBtn.addEventListener('click', () => {
+      selected = currentDraft();
+      updateTrigger();
+      close();
+    });
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        selected = null;
+        updateTrigger();
+        close();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target)) close();
+    });
+
+    const api = {
+      setMin(date) {
+        minDate = date ? new Date(date) : null;
+      },
+      setValue(date) {
+        if (!date) {
+          selected = null;
+          const now = new Date();
+          viewYear = now.getFullYear();
+          viewMonth = now.getMonth();
+          syncTimeSelects(now);
+          updateTrigger();
+          return;
+        }
+        selected = new Date(date);
+        viewYear = selected.getFullYear();
+        viewMonth = selected.getMonth();
+        syncTimeSelects(selected);
+        updateTrigger();
+      },
+      getValue() {
+        return selected ? new Date(selected) : null;
+      },
+      getIso() {
+        const d = api.getValue();
+        return d ? d.toISOString() : null;
+      },
+      getLocalValue() {
+        const d = api.getValue();
+        return d ? toDatetimeLocalValue(d) : '';
+      },
+    };
+
+    const now = new Date();
+    viewYear = now.getFullYear();
+    viewMonth = now.getMonth();
+    syncTimeSelects(now);
+    updateTrigger();
+    return api;
+  }
+
+  const publishAtPicker = createModernDateTimePicker(publishAtField, { optional: false });
+  const histPublishAtPicker = createModernDateTimePicker(histPublishAtField, { optional: true });
+
+  function setDefaultPublishAt() {
+    const minutes =
+      serverConfig.scheduleMinutes > 0 ? serverConfig.scheduleMinutes : 60;
+    const minDate = new Date(Date.now() + 2 * 60 * 1000);
+    const defaultDate = new Date(Date.now() + minutes * 60 * 1000);
+    publishAtPicker.setMin(minDate);
+    publishAtPicker.setValue(defaultDate);
+  }
+
+  function getSelectedPublishAtIso() {
+    return publishAtPicker.getIso();
+  }
+
+  async function downloadMp4FromUrl(url, filename) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Download failed');
+    const blob = await res.blob();
+    const type = blob.type || 'video/mp4';
+    const mp4Blob =
+      type.includes('mp4') || filename.endsWith('.mp4')
+        ? new Blob([blob], { type: 'video/mp4' })
+        : blob;
+    const objectUrl = URL.createObjectURL(mp4Blob);
+    const a = document.createElement('a');
+    a.href = objectUrl;
+    a.download = filename.endsWith('.mp4') ? filename : `${filename}.mp4`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(objectUrl);
+  }
+
+  async function uploadMatchToServer(blob, musicName) {
+    stopSongPreview();
+    previewVideoEl.pause();
+
+    const publishAtIso = getSelectedPublishAtIso();
+    if (pubYoutubeEl.checked) {
+      if (!publishAtIso) {
+        setUploadStatus('Pick a YouTube schedule date/time first.', 'error');
+        return;
+      }
+      if (new Date(publishAtIso).getTime() <= Date.now() + 60 * 1000) {
+        setUploadStatus('Schedule must be at least 1 minute in the future.', 'error');
+        return;
+      }
+    }
+    if (!pubYoutubeEl.checked && !pubTiktokEl.checked && !pubXEl.checked) {
+      // still allow generate/download-only
+    }
+
+    generateBtn.disabled = true;
+    const mixing = musicName && musicName !== 'none';
+    setUploadStatus(
+      mixing
+        ? `Mixing “${musicName}” into MP4…`
+        : 'Converting to MP4…'
+    );
+    const form = new FormData();
+    form.append('video', blob, `ucl_match_${Date.now()}.webm`);
+    form.append('team1', TEAMS[0].label);
+    form.append('team2', TEAMS[1].label);
+    form.append('team1Name', TEAMS[0].fullName || TEAMS[0].label);
+    form.append('team2Name', TEAMS[1].fullName || TEAMS[1].label);
+    form.append('score1', String(scoreTeam1));
+    form.append('score2', String(scoreTeam2));
+    form.append('music', musicName || 'none');
+    if (publishAtIso) form.append('publishAt', publishAtIso);
+    form.append('publishYoutube', pubYoutubeEl.checked ? 'true' : 'false');
+    form.append('publishTiktok', pubTiktokEl.checked ? 'true' : 'false');
+    form.append('publishX', pubXEl.checked ? 'true' : 'false');
+
+    try {
+      const res = await fetch('/api/upload-match', { method: 'POST', body: form });
+      const data = await res.json();
+
+      if (data.previewUrl || data.downloadUrl) {
+        setPreviewSource(data.previewUrl || data.downloadUrl, 'Final MP4 preview');
+        showDownloadButton(data.downloadUrl);
+      }
+
+      lastSharePayload = {
+        caption: data.metadata?.caption || '',
+        title: data.metadata?.title || '',
+        downloadUrl: data.downloadUrl || finalDownloadUrl,
+        filename: `ucl_match_${TEAMS[0].label}_vs_${TEAMS[1].label}_${scoreTeam1}-${scoreTeam2}.mp4`,
+      };
+
+      if (!res.ok || !data.ok) {
+        if (data.downloadUrl) {
+          setUploadStatus(
+            `Finished with errors (${data.error}). MP4 is ready — use Download MP4 or Share to X (manual).`,
+            'error'
+          );
+          return;
+        }
+        throw new Error(data.error || 'Upload failed');
+      }
+
+      renderUploadResult(data);
+    } catch (err) {
+      console.warn('Server upload failed:', err);
+      setUploadStatus(
+        `Server failed (${err.message}). Try again — raw WebM was not downloaded as MP4.`,
+        'error'
+      );
+      generateBtn.disabled = false;
+    }
+  }
+
+  function renderSocialCard(opts) {
+    const {
+      status,
+      nameEl,
+      statusEl,
+      avatarEl,
+      connectBtn,
+      disconnectBtn,
+      connectHref,
+      label,
+      nameKey,
+      avatarKey,
+    } = opts;
+
+    avatarEl.style.display = 'none';
+    avatarEl.removeAttribute('src');
+
+    if (!status) {
+      nameEl.textContent = 'Unavailable';
+      statusEl.textContent = 'Could not reach server';
+      statusEl.className = 'social-account-status err';
+      connectBtn.textContent = 'Connect';
+      connectBtn.href = connectHref;
+      disconnectBtn.disabled = true;
+      return;
+    }
+
+    if (!status.clientConfigured) {
+      nameEl.textContent = 'Not configured';
+      statusEl.textContent = `Add credentials in .env — see SETUP-SOCIAL.md`;
+      statusEl.className = 'social-account-status err';
+      connectBtn.textContent = 'Connect';
+      connectBtn.href = connectHref;
+      disconnectBtn.disabled = true;
+      return;
+    }
+
+    if (status.connected && status.ok) {
+      nameEl.textContent = status[nameKey] || label;
+      statusEl.textContent = status.message || 'Connected';
+      statusEl.className = 'social-account-status ok';
+      if (status[avatarKey]) {
+        avatarEl.src = status[avatarKey];
+        avatarEl.style.display = 'block';
+      }
+      connectBtn.textContent = 'Reconnect';
+      connectBtn.href = connectHref;
+      disconnectBtn.disabled = false;
+      return;
+    }
+
+    nameEl.textContent = status.hasRefreshToken ? 'Connection broken' : 'Not connected';
+    statusEl.textContent = status.error || `Sign in to publish on ${label}`;
+    statusEl.className = `social-account-status ${status.hasRefreshToken ? 'err' : 'warn'}`;
+    connectBtn.textContent = status.hasRefreshToken ? 'Reconnect' : 'Connect';
+    connectBtn.href = connectHref;
+    disconnectBtn.disabled = !status.hasRefreshToken;
+  }
+
+  function renderYouTubeAccount(status) {
+    youtubeStatus = status;
+    renderSocialCard({
+      status,
+      nameEl: ytAccountNameEl,
+      statusEl: ytAccountStatusEl,
+      avatarEl: ytAvatarEl,
+      connectBtn: ytConnectBtn,
+      disconnectBtn: ytDisconnectBtn,
+      connectHref: '/auth/youtube',
+      label: 'YouTube channel',
+      nameKey: 'channelTitle',
+      avatarKey: 'channelThumbnail',
+    });
+  }
+
+  function renderTikTokAccount(status) {
+    tiktokStatus = status;
+    renderSocialCard({
+      status,
+      nameEl: ttAccountNameEl,
+      statusEl: ttAccountStatusEl,
+      avatarEl: ttAvatarEl,
+      connectBtn: ttConnectBtn,
+      disconnectBtn: ttDisconnectBtn,
+      connectHref: '/auth/tiktok',
+      label: 'TikTok',
+      nameKey: 'displayName',
+      avatarKey: 'avatarUrl',
+    });
+  }
+
+  function renderXAccount(status) {
+    xStatus = status;
+    const patched = status
+      ? {
+          ...status,
+          displayLabel: status.username ? `@${status.username}` : status.name,
+        }
+      : null;
+    renderSocialCard({
+      status: patched,
+      nameEl: xAccountNameEl,
+      statusEl: xAccountStatusEl,
+      avatarEl: xAvatarEl,
+      connectBtn: xConnectBtn,
+      disconnectBtn: xDisconnectBtn,
+      connectHref: '/auth/x',
+      label: 'X account',
+      nameKey: 'displayLabel',
+      avatarKey: 'avatarUrl',
+    });
+  }
+
+  async function refreshYouTubeStatus() {
+    ytAccountNameEl.textContent = 'Checking…';
+    try {
+      const res = await fetch('/api/youtube-status');
+      const data = await res.json();
+      renderYouTubeAccount(data);
+      serverConfig.youtubeConfigured = Boolean(data.ok && data.connected);
+      pubYoutubeEl.disabled = !serverConfig.youtubeConfigured;
+      if (!serverConfig.youtubeConfigured) pubYoutubeEl.checked = false;
+      else if (!pubYoutubeEl.dataset.touched) pubYoutubeEl.checked = true;
+      return data;
+    } catch {
+      renderYouTubeAccount(null);
+      return null;
+    }
+  }
+
+  async function refreshTikTokStatus() {
+    ttAccountNameEl.textContent = 'Checking…';
+    try {
+      const res = await fetch('/api/tiktok-status');
+      const data = await res.json();
+      renderTikTokAccount(data);
+      pubTiktokEl.disabled = !data.ok;
+      if (!data.ok) pubTiktokEl.checked = false;
+      return data;
+    } catch {
+      renderTikTokAccount(null);
+      return null;
+    }
+  }
+
+  async function refreshXStatus() {
+    xAccountNameEl.textContent = 'Checking…';
+    try {
+      const res = await fetch('/api/x-status');
+      const data = await res.json();
+      renderXAccount(data);
+      pubXEl.disabled = !data.ok;
+      if (!data.ok) pubXEl.checked = false;
+      return data;
+    } catch {
+      renderXAccount(null);
+      return null;
+    }
+  }
+
+  async function disconnectPlatform(path, refreshFn, label) {
+    if (!confirm(`Disconnect ${label} from this app?`)) return;
+    try {
+      const res = await fetch(path, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Disconnect failed');
+      await refreshFn();
+    } catch (err) {
+      alert(`${label} disconnect failed: ${err.message}`);
+    }
+  }
+
+  function setSetupTab(tab) {
+    const isHistory = tab === 'history';
+    const isFixtures = tab === 'fixtures';
+    const isSetup = !isHistory && !isFixtures;
+    tabBtnSetup.classList.toggle('active', isSetup);
+    tabBtnHistory.classList.toggle('active', isHistory);
+    tabBtnFixtures.classList.toggle('active', isFixtures);
+    tabSetupEl.classList.toggle('hidden-tab', !isSetup);
+    tabHistoryEl.classList.toggle('active', isHistory);
+    tabFixturesEl.classList.toggle('active', isFixtures);
+    if (isHistory) {
+      showHistoryList();
+      loadHistory();
+    } else {
+      historyPreviewEl.pause();
+      historyPreviewEl.removeAttribute('src');
+    }
+    if (isFixtures) loadFixtures();
+  }
+
+  function formatKickoff(iso, fallback) {
+    if (iso) {
+      try {
+        return new Date(iso).toLocaleString(undefined, {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      } catch { /* fall through */ }
+    }
+    return fallback || '';
+  }
+
+  function findClubByName(name) {
+    const n = String(name || '').toLowerCase();
+    const clubs = clubsCatalog.clubs || [];
+    return (
+      clubs.find((c) => c.name.toLowerCase() === n) ||
+      clubs.find((c) => n.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(n)) ||
+      null
+    );
+  }
+
+  async function useFixtureTeams(match) {
+    const home = findClubByName(match.home);
+    const away = findClubByName(match.away);
+    if (home) {
+      t1ClubEl.value = home.id;
+    } else {
+      t1ClubEl.value = '__custom__';
+      document.getElementById('t1-name').value = (match.home || 'HOME').slice(0, 5).toUpperCase();
+    }
+    if (away) {
+      t2ClubEl.value = away.id;
+    } else {
+      t2ClubEl.value = '__custom__';
+      document.getElementById('t2-name').value = (match.away || 'AWAY').slice(0, 5).toUpperCase();
+    }
+    await Promise.all([
+      applyClubSelection(0, { syncColor: true }),
+      applyClubSelection(1, { syncColor: true }),
+    ]);
+    if (!home) {
+      document.getElementById('t1-name').value = match.home || 'HOME';
+      TEAMS[0].fullName = match.home || 'HOME';
+      TEAMS[0].label = (match.home || 'HOME').slice(0, 5).toUpperCase();
+    }
+    if (!away) {
+      document.getElementById('t2-name').value = match.away || 'AWAY';
+      TEAMS[1].fullName = match.away || 'AWAY';
+      TEAMS[1].label = (match.away || 'AWAY').slice(0, 5).toUpperCase();
+    }
+    draw();
+    setSetupTab('setup');
+  }
+
+  function renderFixtures(data) {
+    fixturesLoadingEl.style.display = 'none';
+    const days = data?.days || [];
+    const total = data?.count ?? days.reduce((n, d) => n + (d.matches?.length || 0), 0);
+    fixturesEmptyEl.style.display = total ? 'none' : 'block';
+    fixturesDaysEl.innerHTML = '';
+    if (data?.generatedAt) {
+      const when = new Date(data.generatedAt).toLocaleString();
+      fixturesMetaEl.textContent = data.cached
+        ? `Cached today · last built ${when} · ${total} picks`
+        : `Fresh · built ${when} · ${total} picks`;
+    } else {
+      fixturesMetaEl.textContent = '';
+    }
+    days.forEach((day) => {
+      const block = document.createElement('div');
+      block.className = 'fixtures-day';
+      const h = document.createElement('h3');
+      h.textContent = day.label || day.date;
+      block.appendChild(h);
+      if (!day.matches?.length) {
+        const empty = document.createElement('p');
+        empty.className = 'fixture-sub';
+        empty.textContent = 'No standout fixtures this day.';
+        block.appendChild(empty);
+      } else {
+        day.matches.forEach((m) => {
+          const row = document.createElement('div');
+          row.className = 'fixture-row';
+          const main = document.createElement('div');
+          main.className = 'fixture-main';
+          main.textContent = m.label || `${m.home} vs ${m.away}`;
+          const sub = document.createElement('div');
+          sub.className = 'fixture-sub';
+          sub.textContent = [m.league, formatKickoff(m.kickoff, m.kickoffLocal || m.time), m.venue]
+            .filter(Boolean)
+            .join(' · ');
+          const why = document.createElement('div');
+          why.className = 'fixture-why';
+          why.textContent = m.why || '';
+          const useBtn = document.createElement('button');
+          useBtn.type = 'button';
+          useBtn.className = 'yt-btn fixture-use';
+          useBtn.textContent = 'Use teams';
+          useBtn.addEventListener('click', () => useFixtureTeams(m));
+          row.appendChild(main);
+          row.appendChild(sub);
+          if (m.why) row.appendChild(why);
+          row.appendChild(useBtn);
+          block.appendChild(row);
+        });
+      }
+      fixturesDaysEl.appendChild(block);
+    });
+  }
+
+  async function loadFixtures({ force = false } = {}) {
+    fixturesLoadingEl.style.display = 'block';
+    fixturesEmptyEl.style.display = 'none';
+    fixturesDaysEl.innerHTML = '';
+    fixturesRefreshBtn.disabled = true;
+    try {
+      const url = force ? '/api/fixtures/suggested?refresh=1' : '/api/fixtures/suggested';
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to load fixtures');
+      renderFixtures(data);
+    } catch (err) {
+      fixturesLoadingEl.style.display = 'none';
+      fixturesEmptyEl.style.display = 'block';
+      fixturesEmptyEl.textContent = err.message;
+      fixturesMetaEl.textContent = '';
+    } finally {
+      fixturesRefreshBtn.disabled = false;
+    }
+  }
+
+  function formatHistoryDate(iso) {
+    try {
+      return new Date(iso).toLocaleString();
+    } catch {
+      return iso || '';
+    }
+  }
+
+  function historyTitle(item) {
+    const m = item.match;
+    if (m?.team1Name && m?.team2Name) {
+      return `${m.team1Name} vs ${m.team2Name}`;
+    }
+    if (m?.team1 && m?.team2) return `${m.team1} vs ${m.team2}`;
+    if (item.metadata?.title) return item.metadata.title;
+    return item.filename;
+  }
+
+  function historyScoreLine(item) {
+    const m = item.match;
+    if (!m?.team1 && !m?.team1Name) return null;
+    const a = m.team1Name || m.team1;
+    const b = m.team2Name || m.team2;
+    return `${a} ${m.score1 ?? 0} — ${m.score2 ?? 0} ${b}`;
+  }
+
+  function badgeHtml(label, ok) {
+    return `<span class="hist-badge ${ok ? 'ok' : 'miss'}">${label}: ${ok ? 'posted' : 'not yet'}</span>`;
+  }
+
+  function showHistoryList() {
+    historyListViewEl.style.display = '';
+    historyDetailEl.classList.remove('active');
+    selectedHistoryItem = null;
+    historyPreviewEl.pause();
+    historyPreviewEl.removeAttribute('src');
+    historyStatusEl.textContent = '';
+    historyStatusEl.className = '';
+    if (historyCaptionWrap) historyCaptionWrap.style.display = 'none';
+  }
+
+  function openHistoryItem(item) {
+    selectedHistoryItem = item;
+    historyListViewEl.style.display = 'none';
+    historyDetailEl.classList.add('active');
+    historyDetailTitleEl.textContent = historyTitle(item);
+    const scoreLine = historyScoreLine(item);
+    const bits = [];
+    if (scoreLine) bits.push(scoreLine);
+    bits.push(formatHistoryDate(item.createdAt));
+    if (item.music) bits.push(`Music: ${item.music}`);
+    historyDetailMetaEl.textContent = bits.join(' · ');
+    historyPreviewEl.src = item.previewUrl;
+    historyDownloadBtn.href = item.downloadUrl;
+    historyDownloadBtn.setAttribute('download', item.filename);
+    const caption =
+      item.metadata?.caption ||
+      item.platforms?.tiktok?.caption ||
+      item.metadata?.title ||
+      '';
+    lastSharePayload = {
+      caption: caption || item.metadata?.caption || '',
+      title: item.metadata?.title || historyTitle(item),
+      downloadUrl: item.downloadUrl,
+      filename: item.filename,
+    };
+    if (historyCaptionWrap && historyCaptionBox) {
+      if (caption) {
+        historyCaptionWrap.style.display = 'block';
+        historyCaptionBox.textContent = caption;
+      } else {
+        historyCaptionWrap.style.display = 'none';
+        historyCaptionBox.textContent = '';
+      }
+    }
+
+    const ytOk = Boolean(item.posted?.youtube);
+    const ttOk = Boolean(item.posted?.tiktok);
+    const xOk = Boolean(item.posted?.x);
+
+    histPubYoutubeEl.disabled = ytOk || !serverConfig.youtubeConfigured;
+    histPubTiktokEl.disabled = ttOk || !(tiktokStatus?.ok);
+    // Keep X API publish available if connected, but manual share always works
+    histPubXEl.disabled = xOk || !(xStatus?.ok);
+    histPubYoutubeEl.checked = !ytOk && serverConfig.youtubeConfigured;
+    histPubTiktokEl.checked = !ttOk && Boolean(tiktokStatus?.ok);
+    histPubXEl.checked = false; // prefer manual unless user opts into paid API
+
+
+    const notes = [];
+    if (ytOk) notes.push('YouTube already posted');
+    if (ttOk) notes.push('TikTok already posted');
+    if (xOk) notes.push('X already posted');
+    historyStatusEl.textContent = notes.join(' · ') || 'Select platforms that are still missing.';
+    historyStatusEl.className = '';
+  }
+
+  function renderHistoryList(items) {
+    historyItems = items || [];
+    historyLoadingEl.style.display = 'none';
+    historyEmptyEl.style.display = historyItems.length ? 'none' : 'block';
+    historyListEl.innerHTML = '';
+    historyItems.forEach((item) => {
+      const el = document.createElement('div');
+      el.className = 'history-item';
+      el.innerHTML = `
+        <div class="history-item-title"></div>
+        <div class="history-item-meta"></div>
+        <div class="history-badges">
+          ${badgeHtml('YT', item.posted?.youtube)}
+          ${badgeHtml('TT', item.posted?.tiktok)}
+          ${badgeHtml('X', item.posted?.x)}
+        </div>
+      `;
+      el.querySelector('.history-item-title').textContent = historyTitle(item);
+      const scoreLine = historyScoreLine(item);
+      el.querySelector('.history-item-meta').textContent = scoreLine
+        ? `${scoreLine} · ${formatHistoryDate(item.createdAt)}`
+        : formatHistoryDate(item.createdAt);
+      el.addEventListener('click', () => openHistoryItem(item));
+      historyListEl.appendChild(el);
+    });
+  }
+
+  async function loadHistory() {
+    historyLoadingEl.style.display = 'block';
+    historyEmptyEl.style.display = 'none';
+    historyListEl.innerHTML = '';
+    try {
+      const res = await fetch('/api/history');
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to load history');
+      renderHistoryList(data.items || []);
+    } catch (err) {
+      historyLoadingEl.style.display = 'none';
+      historyEmptyEl.style.display = 'block';
+      historyEmptyEl.textContent = `Could not load history: ${err.message}`;
+    }
+  }
+
+  async function publishHistoryItem() {
+    if (!selectedHistoryItem) return;
+    const body = {
+      publishYoutube: histPubYoutubeEl.checked,
+      publishTiktok: histPubTiktokEl.checked,
+      publishX: histPubXEl.checked,
+      publishAt: histPublishAtPicker.getIso(),
+    };
+    if (!body.publishYoutube && !body.publishTiktok && !body.publishX) {
+      historyStatusEl.textContent = 'Select at least one platform that is not yet posted.';
+      historyStatusEl.className = 'error';
+      return;
+    }
+    historyPublishBtn.disabled = true;
+    historyStatusEl.textContent = 'Publishing…';
+    historyStatusEl.className = '';
+    try {
+      const res = await fetch(
+        `/api/history/${encodeURIComponent(selectedHistoryItem.filename)}/publish`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Publish failed');
+      const bits = [];
+      if (data.youtube?.url) bits.push(`YouTube: ${data.youtube.url}`);
+      if (data.youtubeError) bits.push(`YouTube failed: ${data.youtubeError}`);
+      if (data.tiktok) {
+        bits.push(`TikTok: ${data.tiktok.message || 'ok'}`);
+        if (data.tiktok.caption && (data.tiktok.mode === 'inbox' || !data.tiktok.titleApplied)) {
+          bits.push(`TikTok caption to paste:\n${data.tiktok.caption}`);
+        }
+      }
+      if (data.tiktokError) bits.push(`TikTok failed: ${data.tiktokError}`);
+      if (data.x?.url) bits.push(`X: ${data.x.url}`);
+      if (data.xError) bits.push(`X failed: ${data.xError}`);
+      if (data.message) bits.push(data.message);
+      historyStatusEl.style.whiteSpace = 'pre-wrap';
+      historyStatusEl.textContent = bits.join('\n\n') || 'Done.';
+      historyStatusEl.className = bits.some((b) => b.includes('failed')) ? 'error' : 'success';
+      if (data.item) openHistoryItem({ ...data.item, posted: data.item.posted || {
+        youtube: Boolean(data.item.platforms?.youtube?.url),
+        tiktok: Boolean(data.item.platforms?.tiktok?.ok || data.item.platforms?.tiktok?.publishId),
+        x: Boolean(data.item.platforms?.x?.url),
+      }});
+      await loadHistory();
+      if (data.item) {
+        const fresh = historyItems.find((i) => i.filename === data.item.filename);
+        if (fresh) openHistoryItem(fresh);
+      }
+    } catch (err) {
+      historyStatusEl.textContent = err.message;
+      historyStatusEl.className = 'error';
+    } finally {
+      historyPublishBtn.disabled = false;
+    }
+  }
+
+  tabBtnSetup.addEventListener('click', () => setSetupTab('setup'));
+  tabBtnHistory.addEventListener('click', () => setSetupTab('history'));
+  tabBtnFixtures.addEventListener('click', () => setSetupTab('fixtures'));
+  fixturesRefreshBtn.addEventListener('click', () => loadFixtures({ force: true }));
+  historyRefreshBtn.addEventListener('click', () => loadHistory());
+  historyBackBtn.addEventListener('click', () => showHistoryList());
+  historyPublishBtn.addEventListener('click', () => publishHistoryItem());
+  historyCaptionCopy?.addEventListener('click', async () => {
+    const text = historyCaptionBox?.textContent || '';
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      historyStatusEl.textContent = 'Caption copied.';
+      historyStatusEl.className = 'success';
+    } catch {
+      historyStatusEl.textContent = 'Could not copy caption.';
+      historyStatusEl.className = 'error';
+    }
+  });
+  historyXManualBtn.addEventListener('click', async () => {
+    if (!selectedHistoryItem) return;
+    const caption =
+      selectedHistoryItem.metadata?.caption ||
+      selectedHistoryItem.platforms?.tiktok?.caption ||
+      selectedHistoryItem.metadata?.title ||
+      '';
+    lastSharePayload = {
+      caption,
+      title: selectedHistoryItem.metadata?.title || historyTitle(selectedHistoryItem),
+      downloadUrl: selectedHistoryItem.downloadUrl,
+      filename: selectedHistoryItem.filename,
+    };
+    historyXManualBtn.disabled = true;
+    try {
+      await shareToXManual();
+      historyStatusEl.style.whiteSpace = 'pre-wrap';
+      historyStatusEl.textContent =
+        'X opened with caption filled. Attach the downloaded MP4 in the composer, then post.';
+      historyStatusEl.className = 'success';
+    } finally {
+      historyXManualBtn.disabled = false;
+    }
+  });
+
+  async function checkServer() {
+    try {
+      const res = await fetch('/api/config');
+      serverConfig = await res.json();
+      renderMusicList(serverConfig.musicTracks || []);
+      const [yt] = await Promise.all([
+        refreshYouTubeStatus(),
+        refreshTikTokStatus(),
+        refreshXStatus(),
+      ]);
+      if (yt?.ok && yt.connected) {
+        serverBadgeEl.textContent = yt.channelTitle
+          ? `Server ready · YT: ${yt.channelTitle}`
+          : 'Server ready · social accounts loaded';
+        serverBadgeEl.className = 'ready';
+      } else {
+        serverBadgeEl.textContent = 'Server ready · connect social accounts below';
+        serverBadgeEl.className = '';
+      }
+    } catch {
+      serverBadgeEl.textContent = 'Run npm start — open http://localhost:3000';
+      serverBadgeEl.className = '';
+      renderYouTubeAccount(null);
+      renderTikTokAccount(null);
+      renderXAccount(null);
+    }
+  }
+
+  ytRefreshBtn.addEventListener('click', () => refreshYouTubeStatus());
+  ytDisconnectBtn.addEventListener('click', () =>
+    disconnectPlatform('/api/youtube-disconnect', refreshYouTubeStatus, 'YouTube')
+  );
+  ttRefreshBtn.addEventListener('click', () => refreshTikTokStatus());
+  ttDisconnectBtn.addEventListener('click', () =>
+    disconnectPlatform('/api/tiktok-disconnect', refreshTikTokStatus, 'TikTok')
+  );
+  xRefreshBtn.addEventListener('click', () => refreshXStatus());
+  xDisconnectBtn.addEventListener('click', () =>
+    disconnectPlatform('/api/x-disconnect', refreshXStatus, 'X')
+  );
+  [pubYoutubeEl, pubTiktokEl, pubXEl].forEach((el) => {
+    el.addEventListener('change', () => {
+      el.dataset.touched = '1';
+    });
+  });
+
+  function triggerFlash() {
+    flashAlpha = 1.0;
+  }
+
+  function resetPositions() {
+    // T1 puck (left)
+    pucks[0] = {
+      x: CENTER_X - 150, y: CENTER_Y,
+      vx: 0, vy: 0,
+      radius: PUCK_RADIUS,
+      team: TEAMS[0]
+    };
+    // T2 puck (right)
+    pucks[1] = {
+      x: CENTER_X + 150, y: CENTER_Y,
+      vx: 0, vy: 0,
+      radius: PUCK_RADIUS,
+      team: TEAMS[1]
+    };
+
+    if(isPlaying) {
+      setTimeout(kickPucks, 500);
+    }
+  }
+
+  function kickPucks() {
+    const speed = 14; 
+    
+    pucks[0].vx = speed + (Math.random()*8-4);
+    pucks[0].vy = speed*(Math.random()>0.5?1:-1) + (Math.random()*8-4);
+    
+    pucks[1].vx = -speed + (Math.random()*8-4);
+    pucks[1].vy = speed*(Math.random()>0.5?-1:1) + (Math.random()*8-4);
+  }
+
+  function initGame() {
+    scoreTeam1 = 0;
+    scoreTeam2 = 0;
+    simTime = 0;
+    isPlaying = false;
+    flashAlpha = 0;
+    pendingBlob = null;
+    finalDownloadUrl = null;
+    generateBtn.disabled = true;
+    showDownloadButton(null);
+    stopSongPreview();
+    setPreviewSource(null, 'Match preview');
+    
+    // Goals: Reduced significantly to make scoring harder (approx Math.PI/22.5)
+    const goalWidth = Math.PI / 22.5;
+    goals = [
+      { team: TEAMS[0], baseAngle: Math.PI/2, width: goalWidth }, // Bottom target (T1 goal area)
+      { team: TEAMS[1], baseAngle: -Math.PI/2, width: goalWidth } // Top target (T2 goal area)
+    ];
+    
+    resetPositions();
+  }
+
+  async function startGame() {
+    startBtn.disabled = true;
+    startBtn.textContent = 'Loading logos…';
+    try {
+      await applySettings();
+      await ensureTeamLogosReady();
+      initGame();
+      setupPanel.style.display = 'none';
+      postMatchPanel.style.display = 'none';
+
+      await ensureAudio();
+      await document.fonts.ready;
+
+      // Paint correct crests onto the canvas before MediaRecorder starts
+      draw();
+      await waitAnimationFrames(3);
+
+      isPlaying = true;
+      lastTime = performance.now();
+      startRecording();
+      kickPucks();
+
+      cancelAnimationFrame(animationRef);
+      animationRef = requestAnimationFrame(gameLoop);
+    } finally {
+      startBtn.disabled = false;
+      startBtn.textContent = 'Start & Record Video';
+    }
+  }
+
+  function finishGame() {
+    isPlaying = false;
+    postMatchPanel.style.display = 'block';
+    finalScoreEl.textContent = `${TEAMS[0].label} ${scoreTeam1} — ${scoreTeam2} ${TEAMS[1].label}`;
+    setUploadStatus('Finalizing recording…');
+    generateBtn.disabled = true;
+    
+    // Ensure pucks stop exactly at end
+    pucks[0].vx = 0; pucks[0].vy = 0;
+    pucks[1].vx = 0; pucks[1].vy = 0;
+    
+    stopRecording();
+  }
+
+  startBtn.addEventListener('click', startGame);
+  generateBtn.addEventListener('click', () => {
+    if (!pendingBlob) {
+      setUploadStatus('Recording not ready yet.', 'error');
+      return;
+    }
+    uploadMatchToServer(pendingBlob, selectedMusic);
+  });
+  downloadBtn.addEventListener('click', async () => {
+    if (!finalDownloadUrl) return;
+    downloadBtn.disabled = true;
+    setUploadStatus('Downloading MP4…');
+    try {
+      const name = `ucl_match_${TEAMS[0].label}_vs_${TEAMS[1].label}_${scoreTeam1}-${scoreTeam2}.mp4`;
+      await downloadMp4FromUrl(finalDownloadUrl, name);
+      setUploadStatus('MP4 downloaded.', 'success');
+    } catch (err) {
+      setUploadStatus(`Download failed: ${err.message}`, 'error');
+    } finally {
+      downloadBtn.disabled = false;
+    }
+  });
+  xManualBtn.addEventListener('click', () => shareToXManual());
+  restartBtn.addEventListener('click', () => {
+    stopSongPreview();
+    previewVideoEl.pause();
+    postMatchPanel.style.display = 'none';
+    setupPanel.style.display = 'flex';
+    initGame();
+    draw(); // Initial screen reset
+  });
+
+  function checkGoalScore(puck, collisionAngle) {
+    let angle = collisionAngle % (2*Math.PI);
+    if(angle < 0) angle += 2*Math.PI;
+
+    for (let goal of goals) {
+      let gAngle = goal.currentAngle % (2*Math.PI);
+      if(gAngle < 0) gAngle += 2*Math.PI;
+      
+      let diff = Math.abs(angle - gAngle);
+      if(diff > Math.PI) diff = 2*Math.PI - diff;
+      
+      if(diff < goal.width / 2) {
+        // T1 scores in T2's Goal
+        if (puck.team.id === TEAMS[0].id && goal.team.id === TEAMS[1].id) {
+          scoreTeam1++;
+          triggerGoal();
+          return true;
+        } 
+        // T2 scores in T1's Goal
+        else if (puck.team.id === TEAMS[1].id && goal.team.id === TEAMS[0].id) {
+          scoreTeam2++;
+          triggerGoal();
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function triggerGoal() {
+    triggerFlash();
+    playGoalSound();
+    pucks[0].vx = 0; pucks[0].vy = 0;
+    pucks[1].vx = 0; pucks[1].vy = 0;
+    resetPositions();
+  }
+
+  function updatePhysics(dt) {
+    if(!isPlaying) return;
+
+    const tScale = dt / 16.66;
+
+    // Fast moving smaller goals 
+    goals[0].currentAngle = goals[0].baseAngle + Math.sin(Date.now()*0.0018) * (Math.PI/2.5);
+    goals[1].currentAngle = goals[1].baseAngle + Math.sin(Date.now()*0.0022 + Math.PI/4) * (Math.PI/2.5);
+
+    const friction = 0.9995; 
+    const maxSpeed = 30; // Scale speed for high res
+    const minSpeed = 8;
+
+    for(let i=0; i<pucks.length; i++){
+      let p = pucks[i];
+      p.vx *= friction;
+      p.vy *= friction;
+
+      let speed = Math.hypot(p.vx, p.vy);
+      if(speed > maxSpeed) {
+        p.vx = (p.vx/speed)*maxSpeed;
+        p.vy = (p.vy/speed)*maxSpeed;
+      }
+      if(speed < minSpeed && speed > 0.1) {
+        p.vx = (p.vx/speed)*minSpeed;
+        p.vy = (p.vy/speed)*minSpeed;
+      }
+      
+      p.x += p.vx * tScale;
+      p.y += p.vy * tScale;
+
+      let distFromCenter = Math.hypot(p.x - CENTER_X, p.y - CENTER_Y);
+      if (distFromCenter > PITCH_RADIUS - p.radius) {
+        let nx = (p.x - CENTER_X) / distFromCenter;
+        let ny = (p.y - CENTER_Y) / distFromCenter;
+        let collisionAngle = Math.atan2(ny, nx);
+        
+        let scored = checkGoalScore(p, collisionAngle);
+        if(scored) return;
+
+        playHitSound();
+
+        p.x = CENTER_X + nx * (PITCH_RADIUS - p.radius);
+        p.y = CENTER_Y + ny * (PITCH_RADIUS - p.radius);
+
+        let dotProduct = p.vx * nx + p.vy * ny;
+        p.vx = p.vx - 2 * dotProduct * nx;
+        p.vy = p.vy - 2 * dotProduct * ny;
+
+        let angleJitter = (Math.random() - 0.5) * 0.4;
+        let c = Math.cos(angleJitter);
+        let s = Math.sin(angleJitter);
+        let vxn = p.vx * c - p.vy * s;
+        let vyn = p.vx * s + p.vy * c;
+        
+        p.vx = vxn * 1.05; 
+        p.vy = vyn * 1.05;
+      }
+    }
+
+    let p1 = pucks[0];
+    let p2 = pucks[1];
+    let dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    
+    if(dist < p1.radius + p2.radius) {
+      let overlap = (p1.radius + p2.radius) - dist;
+      let nx = (p2.x - p1.x) / dist;
+      let ny = (p2.y - p1.y) / dist;
+      
+      p1.x -= nx * overlap / 2;
+      p1.y -= ny * overlap / 2;
+      p2.x += nx * overlap / 2;
+      p2.y += ny * overlap / 2;
+
+      let kx = (p1.vx - p2.vx);
+      let ky = (p1.vy - p2.vy);
+      let p_val = 2 * (nx * kx + ny * ky) / 2; 
+      
+      p1.vx = p1.vx - p_val * nx;
+      p1.vy = p1.vy - p_val * ny;
+      p2.vx = p2.vx + p_val * nx;
+      p2.vy = p2.vy + p_val * ny;
+
+      p1.vx *= 1.15; p1.vy *= 1.15;
+      p2.vx *= 1.15; p2.vy *= 1.15;
+    }
+  }
+
+  function updateGameTime(dt) {
+    if(!isPlaying) return;
+    
+    let simTimeIncrement = (dt / MATCH_DURATION_MS) * MAX_SIM_TIME;
+    simTime += simTimeIncrement;
+    
+    if(simTime >= MAX_SIM_TIME) {
+      simTime = MAX_SIM_TIME;
+      finishGame();
+    }
+  }
+
+  function drawUI() {
+    ctx.save();
+    
+    // Floating semi-transparent UI Box
+    const sbWidth = 860;
+    const sbHeight = 130;
+    const sbX = CENTER_X - sbWidth/2;
+    const sbY = 180;
+    
+    ctx.fillStyle = 'rgba(10, 20, 30, 0.7)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 3;
+    
+    ctx.beginPath();
+    ctx.roundRect(sbX, sbY, sbWidth, sbHeight, 35);
+    ctx.fill();
+    ctx.stroke();
+
+    // Inner Glow simulation via an inner stroke 
+    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(sbX+1, sbY+1, sbWidth-2, sbHeight-2, 34);
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Team 1 Name
+    ctx.fillStyle = TEAMS[0].color;
+    ctx.shadowColor = TEAMS[0].color;
+    ctx.shadowBlur = 15;
+    ctx.font = '900 45px Inter';
+    ctx.fillText(TEAMS[0].label, sbX + 130, sbY + sbHeight/2);
+    
+    // Team 1 Score
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 0;
+    ctx.font = '900 80px Inter';
+    ctx.fillText(scoreTeam1, sbX + 310, sbY + sbHeight/2);
+
+    // Timer
+    ctx.fillStyle = '#ffd700';
+    ctx.shadowColor = '#ffd700';
+    ctx.shadowBlur = 15;
+    ctx.font = '300 45px Inter';
+    const timeStr = Math.floor(simTime).toString().padStart(2, '0') + "'";
+    ctx.fillText(timeStr, CENTER_X, sbY + sbHeight/2);
+
+    // Team 2 Score
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 0;
+    ctx.font = '900 80px Inter';
+    ctx.fillText(scoreTeam2, sbX + sbWidth - 310, sbY + sbHeight/2);
+
+    // Team 2 Label
+    ctx.fillStyle = TEAMS[1].color;
+    ctx.shadowColor = TEAMS[1].color;
+    ctx.shadowBlur = 15;
+    ctx.font = '900 45px Inter';
+    ctx.fillText(TEAMS[1].label, sbX + sbWidth - 130, sbY + sbHeight/2);
+    
+    ctx.restore();
+  }
+
+  function draw() {
+    // Solid background for reliable recording
+    ctx.fillStyle = '#050a0f';
+    ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+
+    // Outer dark radial
+    let bgGrad = ctx.createRadialGradient(CENTER_X, CENTER_Y, 0, CENTER_X, CENTER_Y, LOGICAL_HEIGHT);
+    bgGrad.addColorStop(0, '#0a111a');
+    bgGrad.addColorStop(1, '#020406');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+
+    // Pitch
+    let pitchGrad = ctx.createRadialGradient(CENTER_X, CENTER_Y, 0, CENTER_X, CENTER_Y, PITCH_RADIUS);
+    pitchGrad.addColorStop(0, '#023315');
+    pitchGrad.addColorStop(1, '#010d06');
+    
+    ctx.beginPath();
+    ctx.arc(CENTER_X, CENTER_Y, PITCH_RADIUS, 0, 2*Math.PI);
+    ctx.fillStyle = pitchGrad;
+    ctx.fill();
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+
+    // Pitch lines
+    ctx.beginPath();
+    ctx.arc(CENTER_X, CENTER_Y, PITCH_RADIUS * 0.45, 0, 2*Math.PI);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(CENTER_X, CENTER_Y, 40, 0, 2*Math.PI);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(CENTER_X - PITCH_RADIUS, CENTER_Y);
+    ctx.lineTo(CENTER_X + PITCH_RADIUS, CENTER_Y);
+    ctx.stroke();
+
+    // Goals
+    for (let goal of goals) {
+      if(goal.currentAngle === undefined) goal.currentAngle = goal.baseAngle;
+      
+      ctx.beginPath();
+      ctx.arc(CENTER_X, CENTER_Y, PITCH_RADIUS, goal.currentAngle - goal.width/2, goal.currentAngle + goal.width/2);
+      ctx.lineWidth = 22;
+      ctx.strokeStyle = goal.team.color;
+      ctx.lineCap = 'round';
+      
+      ctx.shadowColor = goal.team.color;
+      ctx.shadowBlur = 35;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // Pucks
+    for (let p of pucks) {
+      if(!p) continue;
+
+      ctx.save();
+      
+      ctx.shadowColor = p.team.color;
+      ctx.shadowBlur = 25;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, 2*Math.PI);
+      ctx.fillStyle = '#000000';
+      ctx.fill();
+      
+      ctx.shadowBlur = 0; 
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, 2*Math.PI);
+      ctx.clip();
+      
+      // Fit full crest inside the circle (contain) — oval / shield logos aren't round
+      if (p.team.imgLoaded) {
+        const img = p.team.logoDraw || p.team.img;
+        const iw = img.naturalWidth || img.width || 0;
+        const ih = img.naturalHeight || img.height || 0;
+        if (iw > 0 && ih > 0) {
+          const size = p.radius * 2 * 0.88;
+          const scale = Math.min(size / iw, size / ih);
+          const dw = iw * scale;
+          const dh = ih * scale;
+          ctx.drawImage(img, p.x - dw / 2, p.y - dh / 2, dw, dh);
+        }
+      } else {
+        ctx.fillStyle = p.team.color;
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.team.label, p.x, p.y);
+      }
+      
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, 2*Math.PI);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    // Flash Overlay (Inside Canvas)
+    if (flashAlpha > 0) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+      ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+      flashAlpha -= 0.08;
+    }
+
+    // Draw Scoreboard Native
+    if (isPlaying || simTime > 0) {
+       drawUI();
+    }
+  }
+
+  function gameLoop(timestamp) {
+    const dt = timestamp - lastTime;
+    lastTime = timestamp;
+
+    updatePhysics(dt);
+    updateGameTime(dt);
+    draw();
+
+    if(isPlaying) {
+      animationRef = requestAnimationFrame(gameLoop);
+    }
+  }
+
+  // Handle rounding in older browsers visually loading font correctly
+  window.onload = () => {
+    initGame();
+    draw();
+    checkServer();
+    loadClubsCatalog();
+  };
+
+</script>
+</body>
+</html>

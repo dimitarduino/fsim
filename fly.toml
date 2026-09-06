@@ -1,0 +1,37 @@
+# Fly.io app config — after `fly launch`, confirm app name/region match your account.
+# Docs: https://fly.io/docs/reference/configuration/
+
+app = 'fb-dimnai'
+primary_region = 'fra'
+
+[build]
+
+[env]
+  NODE_ENV = 'production'
+  PORT = '3000'
+  SAVE_LOCAL_COPY = 'true'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'requests'
+    hard_limit = 25
+    soft_limit = 20
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+# Persist generated MP4s across deploys:
+#   fly volumes create recordings_data --size 3 --region fra
+# Then uncomment:
+# [[mounts]]
+#   source = 'recordings_data'
+#   destination = '/app/recordings'
