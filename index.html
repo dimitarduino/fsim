@@ -994,6 +994,19 @@
         <button type="button" class="yt-btn danger" id="x-disconnect-btn" disabled>Disconnect</button>
       </div>
     </div>
+
+    <div class="social-card" id="gemini-card">
+      <h3>Gemini (titles)</h3>
+      <div class="social-account-row">
+        <div class="social-account-meta">
+          <div class="social-account-name" id="gemini-account-name">Checking…</div>
+          <div class="social-account-status" id="gemini-account-status">Probing AI…</div>
+        </div>
+      </div>
+      <div class="social-actions">
+        <button type="button" class="yt-btn" id="gemini-refresh-btn">Refresh</button>
+      </div>
+    </div>
   </div>
 
   <p id="server-badge">Checking server…</p>
@@ -1124,6 +1137,10 @@
   const xAvatarEl = document.getElementById('x-avatar');
   const xConnectBtn = document.getElementById('x-connect-btn');
   const xRefreshBtn = document.getElementById('x-refresh-btn');
+  const geminiAccountNameEl = document.getElementById('gemini-account-name');
+  const geminiAccountStatusEl = document.getElementById('gemini-account-status');
+  const geminiRefreshBtn = document.getElementById('gemini-refresh-btn');
+  let geminiStatus = null;
   const xDisconnectBtn = document.getElementById('x-disconnect-btn');
   const pubYoutubeEl = document.getElementById('pub-youtube');
   const pubTiktokEl = document.getElementById('pub-tiktok');
@@ -1808,8 +1825,15 @@
     const metaBits = [];
     if (data.music) metaBits.push(`Music: ${data.music}`);
     if (data.metadata?.title) metaBits.push(`Title: “${data.metadata.title}”`);
-    if (data.metadata?.source === 'gemini') metaBits.push('Source: AI');
-    else if (data.metadata?.source === 'fallback') metaBits.push('Source: local templates');
+    if (data.metadata?.source === 'gemini') {
+      metaBits.push(
+        `Titles: Gemini AI ✓${data.metadata.model ? ` (${data.metadata.model})` : ''}`
+      );
+    } else if (data.metadata?.source === 'fallback') {
+      metaBits.push('Titles: local templates (Gemini failed or offline)');
+    } else if (data.metadata?.title) {
+      metaBits.push('Titles: generated');
+    }
     meta.textContent = metaBits.join('\n');
     wrap.appendChild(meta);
 
@@ -2659,6 +2683,51 @@
     }
   }
 
+  function renderGeminiStatus(status) {
+    geminiStatus = status;
+    if (!status) {
+      geminiAccountNameEl.textContent = 'Gemini unreachable';
+      geminiAccountStatusEl.textContent = 'Could not reach /api/gemini-status';
+      geminiAccountStatusEl.className = 'social-account-status err';
+      return;
+    }
+    if (status.ok) {
+      geminiAccountNameEl.textContent = 'Gemini works';
+      geminiAccountStatusEl.textContent = status.message || `AI titles OK (${status.model || 'model'})`;
+      geminiAccountStatusEl.className = 'social-account-status ok';
+      return;
+    }
+    if (!status.configured) {
+      geminiAccountNameEl.textContent = 'Gemini not configured';
+      geminiAccountStatusEl.textContent = status.message || 'Set GEMINI_API_KEY';
+      geminiAccountStatusEl.className = 'social-account-status warn';
+      return;
+    }
+    geminiAccountNameEl.textContent = 'Gemini failing';
+    geminiAccountStatusEl.textContent =
+      status.error || status.message || 'AI titles failing — local templates used';
+    geminiAccountStatusEl.className = 'social-account-status err';
+  }
+
+  async function refreshGeminiStatus({ force = false } = {}) {
+    geminiAccountNameEl.textContent = 'Checking…';
+    geminiAccountStatusEl.textContent = 'Probing AI…';
+    geminiAccountStatusEl.className = 'social-account-status';
+    geminiRefreshBtn.disabled = true;
+    try {
+      const url = force ? '/api/gemini-status?refresh=1' : '/api/gemini-status';
+      const res = await fetch(url);
+      const data = await res.json();
+      renderGeminiStatus(data);
+      return data;
+    } catch {
+      renderGeminiStatus(null);
+      return null;
+    } finally {
+      geminiRefreshBtn.disabled = false;
+    }
+  }
+
   async function disconnectPlatform(path, refreshFn, label) {
     if (!confirm(`Disconnect ${label} from this app?`)) return;
     try {
@@ -3076,18 +3145,24 @@
       const res = await fetch('/api/config');
       serverConfig = await res.json();
       renderMusicList(serverConfig.musicTracks || []);
-      const [yt] = await Promise.all([
+      const [yt, _tt, _x, gem] = await Promise.all([
         refreshYouTubeStatus(),
         refreshTikTokStatus(),
         refreshXStatus(),
+        refreshGeminiStatus(),
       ]);
+      const gemBit = gem?.ok
+        ? 'Gemini ✓'
+        : gem?.configured
+          ? 'Gemini ✗'
+          : 'Gemini off';
       if (yt?.ok && yt.connected) {
         serverBadgeEl.textContent = yt.channelTitle
-          ? `Server ready · YT: ${yt.channelTitle}`
-          : 'Server ready · social accounts loaded';
+          ? `Server ready · YT: ${yt.channelTitle} · ${gemBit}`
+          : `Server ready · social accounts loaded · ${gemBit}`;
         serverBadgeEl.className = 'ready';
       } else {
-        serverBadgeEl.textContent = 'Server ready · connect social accounts below';
+        serverBadgeEl.textContent = `Server ready · connect socials · ${gemBit}`;
         serverBadgeEl.className = '';
       }
     } catch {
@@ -3096,6 +3171,7 @@
       renderYouTubeAccount(null);
       renderTikTokAccount(null);
       renderXAccount(null);
+      renderGeminiStatus(null);
     }
   }
 
@@ -3111,6 +3187,7 @@
   xDisconnectBtn.addEventListener('click', () =>
     disconnectPlatform('/api/x-disconnect', refreshXStatus, 'X')
   );
+  geminiRefreshBtn.addEventListener('click', () => refreshGeminiStatus({ force: true }));
   [pubYoutubeEl, pubTiktokEl, pubXEl].forEach((el) => {
     el.addEventListener('change', () => {
       el.dataset.touched = '1';
@@ -3388,68 +3465,126 @@
     }
   }
 
+  function drawScoreboardCrest(team, cx, cy, size) {
+    const img = team.logoDraw || team.img;
+    const iw = img?.naturalWidth || img?.width || 0;
+    const ih = img?.naturalHeight || img?.height || 0;
+    const r = size / 2;
+
+    ctx.save();
+    // Light disc behind crest so dark logos (Inter, Juventus, etc.) stay readable
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0,0,0,0.25)';
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#f3f6fa';
+    ctx.fill();
+    ctx.clip();
+
+    if (team.imgLoaded && iw > 0 && ih > 0) {
+      const pad = size * 0.82;
+      const scale = Math.min(pad / iw, pad / ih);
+      const dw = iw * scale;
+      const dh = ih * scale;
+      ctx.drawImage(img, cx - dw / 2, cy - dh / 2, dw, dh);
+    } else {
+      ctx.fillStyle = team.color || '#333';
+      ctx.font = `900 ${Math.round(size * 0.32)}px Inter, system-ui, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(team.label || '?', cx, cy);
+    }
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
+    ctx.strokeStyle = team.color || 'rgba(0,0,0,0.2)';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+  }
+
   function drawUI() {
     ctx.save();
-    
-    // Floating semi-transparent UI Box
-    const sbWidth = 860;
-    const sbHeight = 130;
-    const sbX = CENTER_X - sbWidth/2;
-    const sbY = 180;
-    
-    ctx.fillStyle = 'rgba(10, 20, 30, 0.7)';
-    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+
+    const sbWidth = 920;
+    const sbHeight = 140;
+    const sbX = CENTER_X - sbWidth / 2;
+    const sbY = 170;
+    const midY = sbY + sbHeight / 2;
+    const crestSize = 88;
+
+    // Light glass scoreboard (readable for dark club crests)
+    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur = 24;
+    ctx.fillStyle = 'rgba(248, 250, 252, 0.94)';
+    ctx.strokeStyle = 'rgba(15, 23, 42, 0.12)';
     ctx.lineWidth = 3;
-    
     ctx.beginPath();
-    ctx.roundRect(sbX, sbY, sbWidth, sbHeight, 35);
+    ctx.roundRect(sbX, sbY, sbWidth, sbHeight, 28);
     ctx.fill();
     ctx.stroke();
+    ctx.shadowBlur = 0;
 
-    // Inner Glow simulation via an inner stroke 
-    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+    // Soft inner edge
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.roundRect(sbX+1, sbY+1, sbWidth-2, sbHeight-2, 34);
+    ctx.roundRect(sbX + 2, sbY + 2, sbWidth - 4, sbHeight - 4, 26);
     ctx.stroke();
+
+    // Team color accent bars
+    ctx.fillStyle = TEAMS[0].color;
+    ctx.beginPath();
+    ctx.roundRect(sbX + 10, sbY + 18, 8, sbHeight - 36, 4);
+    ctx.fill();
+    ctx.fillStyle = TEAMS[1].color;
+    ctx.beginPath();
+    ctx.roundRect(sbX + sbWidth - 18, sbY + 18, 8, sbHeight - 36, 4);
+    ctx.fill();
 
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    
-    // Team 1 Name
-    ctx.fillStyle = TEAMS[0].color;
-    ctx.shadowColor = TEAMS[0].color;
-    ctx.shadowBlur = 15;
-    ctx.font = '900 45px Inter';
-    ctx.fillText(TEAMS[0].label, sbX + 130, sbY + sbHeight/2);
-    
-    // Team 1 Score
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowBlur = 0;
-    ctx.font = '900 80px Inter';
-    ctx.fillText(scoreTeam1, sbX + 310, sbY + sbHeight/2);
 
-    // Timer
-    ctx.fillStyle = '#ffd700';
-    ctx.shadowColor = '#ffd700';
-    ctx.shadowBlur = 15;
-    ctx.font = '300 45px Inter';
+    // Team 1 crest + name
+    drawScoreboardCrest(TEAMS[0], sbX + 78, midY, crestSize);
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '900 36px Inter, system-ui, sans-serif';
+    ctx.fillText(TEAMS[0].label, sbX + 168, midY);
+
+    // Team 1 score
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '900 72px Inter, system-ui, sans-serif';
+    ctx.fillText(scoreTeam1, sbX + 290, midY);
+
+    // Center timer pill
     const timeStr = Math.floor(simTime).toString().padStart(2, '0') + "'";
-    ctx.fillText(timeStr, CENTER_X, sbY + sbHeight/2);
+    const pillW = 110;
+    const pillH = 56;
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.roundRect(CENTER_X - pillW / 2, midY - pillH / 2, pillW, pillH, 16);
+    ctx.fill();
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '700 34px Inter, system-ui, sans-serif';
+    ctx.fillText(timeStr, CENTER_X, midY);
 
-    // Team 2 Score
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowBlur = 0;
-    ctx.font = '900 80px Inter';
-    ctx.fillText(scoreTeam2, sbX + sbWidth - 310, sbY + sbHeight/2);
+    // Team 2 score
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '900 72px Inter, system-ui, sans-serif';
+    ctx.fillText(scoreTeam2, sbX + sbWidth - 290, midY);
 
-    // Team 2 Label
-    ctx.fillStyle = TEAMS[1].color;
-    ctx.shadowColor = TEAMS[1].color;
-    ctx.shadowBlur = 15;
-    ctx.font = '900 45px Inter';
-    ctx.fillText(TEAMS[1].label, sbX + sbWidth - 130, sbY + sbHeight/2);
-    
+    // Team 2 name + crest
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '900 36px Inter, system-ui, sans-serif';
+    ctx.fillText(TEAMS[1].label, sbX + sbWidth - 168, midY);
+    drawScoreboardCrest(TEAMS[1], sbX + sbWidth - 78, midY, crestSize);
+
     ctx.restore();
   }
 

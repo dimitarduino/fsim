@@ -712,45 +712,73 @@ function creativeFallbackMetadata(match) {
   const t2 = String(match.team2Name || match.team2 || 'T2');
   const t1Tag = t1.replace(/\s+/g, '');
   const t2Tag = t2.replace(/\s+/g, '');
-  const seed = hashSeed(t1, t2, match.score1, match.score2, Date.now());
+  const seed = hashSeed(t1, t2, match.score1, match.score2, Date.now(), Math.random());
 
   const titles = [
-    `${t1} vs ${t2}: neon pitch, zero chill #Football #Shorts`,
-    `Don't blink — ${t1} ⚔️ ${t2} just went crazy #Soccer #Football`,
-    `${t1} vs ${t2} in under a minute of chaos #FootballFans #Shorts`,
-    `That ending though… ${t1} vs ${t2} #Football #Soccer #Shorts`,
-    `Arcade football energy: ${t1} vs ${t2} #Sports #Football`,
-    `${t1} and ${t2} turned the pitch into a light show #Football #Shorts`,
-    `Plot twist football: ${t1} vs ${t2} #SoccerFans #Shorts`,
-    `Matchday dopamine: ${t1} vs ${t2} #Football #Highlights`,
-    `${t1} vs ${t2} — this edit slaps hard #FootballTikTok #Shorts`,
-    `You weren't ready for ${t1} vs ${t2} #Football #Soccer`,
+    `Wait for the last bounce… ${t1} vs ${t2} #Football #Shorts`,
+    `POV: ${t1} and ${t2} forgot defense exists #Soccer #Shorts`,
+    `Tell me this ${t1} vs ${t2} ending is fair 😭 #Football #Shorts`,
+    `I showed a ${t1} fan this ${t2} clip… #Football #Soccer`,
+    `${t1} vs ${t2} — pause at 0:08 and you'll see it #Shorts #Football`,
+    `This ${t1}–${t2} rivalry clip hits different #Football #Shorts`,
+    `Not the ${t1} vs ${t2} plot twist I expected #Soccer #Shorts`,
+    `Neon pitch. Zero chill. ${t1} vs ${t2} #Football #Shorts`,
+    `Who actually survives this ${t1} vs ${t2} chaos? #Football #Shorts`,
+    `${t1} vs ${t2}: the bounce that broke the timeline #Soccer #Shorts`,
+    `Comment ${t1} or ${t2} before it ends 👀 #Football #Shorts`,
+    `This is why ${t1} vs ${t2} never sleeps #Football #Shorts`,
+    `Unfair? Genius? ${t1} vs ${t2} decide #Soccer #Football`,
+    `One rebound. Entire ${t1} vs ${t2} mood shift #Football #Shorts`,
+    `Scroll slower — ${t1} vs ${t2} goes feral #Football #Shorts`,
   ];
+
   const captions = [
-    `${t1} vs ${t2} on a neon pitch. Instant replay energy. #Football #Soccer #Shorts #${t1Tag}`,
-    `Blink and you miss it — ${t1} ⚔️ ${t2}. #FootballFans #Sports #${t2Tag}`,
-    `Arcade vibes only. ${t1} vs ${t2}. #Football #Highlights #Shorts`,
-    `${t1} vs ${t2}: goals, rebounds, pure matchday mania. #Soccer #FootballEdit`,
-    `Fast football hit. ${t1} vs ${t2}. Save this one. #Football #SoccerFans #Shorts`,
+    `${t1} vs ${t2} and the ending is rude 😭 who you got? #Football #Soccer #Shorts #${t1Tag} #${t2Tag}`,
+    `Neon football dopamine. ${t1} ⚔️ ${t2}. Stay for the bounce. #Football #Shorts #Matchday`,
+    `Tell me ${t1} vs ${t2} isn't personal. I'll wait. #Soccer #FootballTikTok #${t1Tag}`,
+    `POV: your feed finally gives you ${t1} vs ${t2} chaos. #Football #Soccer #Shorts`,
+    `${t1} vs ${t2} — comment the winner before it flips. #FootballFans #Shorts #${t2Tag}`,
+    `This ${t1}–${t2} clip is illegal for the heart rate. #Football #Soccer #Highlights`,
+    `Arcade energy only. ${t1} vs ${t2}. Save if you felt that. #Football #Shorts #Sports`,
+    `Rivalry speedrun: ${t1} vs ${t2}. No commentary needed. #Soccer #Football #Shorts`,
   ];
+
   const descHooks = [
-    `${t1} vs ${t2} in a neon simulation that feels like a fever-dream highlight reel.`,
-    `If your feed needs football chaos, ${t1} vs ${t2} delivers in under a minute.`,
-    `No commentary needed — just ${t1}, ${t2}, and a glowing pitch going wild.`,
-    `This ${t1} vs ${t2} clip is built for Shorts scrollers who live for matchday energy.`,
-    `Neon lights. Quick goals. ${t1} vs ${t2} turns into pure football dopamine.`,
+    `${t1} vs ${t2} on a neon pitch — and the decisive moment sneaks up on you.`,
+    `If you love chaotic matchday energy, this ${t1} vs ${t2} short is your dopamine hit.`,
+    `No boring build-up. Just ${t1}, ${t2}, and a glowing pitch that refuses to chill.`,
+    `This ${t1} vs ${t2} simulation feels like a fever-dream highlight reel made for Shorts.`,
+    `Rivalry brain activated: ${t1} vs ${t2} in under a minute of pure scroll-stop football.`,
+  ];
+
+  const midLines = [
+    `Watch the rebounds — that's where the whole mood flips.`,
+    `Don't skip: the last exchange is the whole point.`,
+    `It's arcade football, but the tension is weirdly real.`,
+    `Built for people who yell at their phone during matchday.`,
+  ];
+
+  const ctas = [
+    `Drop ${t1} or ${t2} in the comments — no fence-sitting.`,
+    `Be honest: which club are you defending after this?`,
+    `Tag a friend who supports the wrong side of this rivalry.`,
+    `Like if your heart rate went up for no reason.`,
   ];
 
   const title = pickOne(titles, seed);
   const caption = pickOne(captions, seed >> 3);
   const hook = pickOne(descHooks, seed >> 5);
+  const mid = pickOne(midLines, seed >> 7);
+  const cta = pickOne(ctas, seed >> 9);
   const description = [
     hook,
-    'Stay for the ending — it flips the vibe.',
+    mid,
     '',
-    `Final (spoiler): ${t1} ${match.score1}-${match.score2} ${t2}`,
+    `Final: ${t1} ${match.score1}-${match.score2} ${t2}`,
     '',
-    `#Football #Soccer #FootballFans #SoccerFans #FootballShorts #SoccerShorts #Shorts #Sports #Highlights #FootballTikTok #SoccerReels #Matchday #${t1Tag} #${t2Tag} #FootballEdit #ViralFootball`,
+    cta,
+    '',
+    `#Football #Soccer #Shorts #FootballShorts #SoccerShorts #FootballTikTok #SoccerReels #Matchday #Highlights #Sports #FootballEdit #ViralFootball #FootballFans #SoccerFans #${t1Tag} #${t2Tag} #${t1Tag}vs${t2Tag} #FootballHighlights`,
   ].join('\n');
 
   const tags = [
@@ -759,22 +787,23 @@ function creativeFallbackMetadata(match) {
     'football shorts',
     'soccer shorts',
     'football highlights',
+    'viral football',
     'matchday',
     'sports',
     'neon football',
-    'viral football',
+    'football tiktok',
     t1,
     t2,
     match.team1,
     match.team2,
-    'football fans',
+    `${t1} vs ${t2}`,
   ].filter(Boolean);
 
   return {
     title: stripScoreFromTitle(title).slice(0, 100),
     description,
-    caption: stripScoreFromTitle(caption).slice(0, 500),
-    tags: [...new Set(tags)].slice(0, 14),
+    caption: stripScoreFromTitle(caption).slice(0, 220),
+    tags: [...new Set(tags.map(String))].slice(0, 14),
     categoryId: '17',
     categoryName: 'Sports',
     source: 'fallback',
@@ -789,6 +818,7 @@ function stripScoreFromTitle(title) {
   return String(title || '')
     // remove patterns like 2-1, 2–1, 2:1, ENDS 2-1, wins 3-0
     .replace(/\bENDS?\s+\d+\s*[-–:]\s*\d+\b/gi, '')
+    .replace(/\b(?:wins?|beats?|defeats?)\b/gi, '')
     .replace(/\b\d+\s*[-–:]\s*\d+\b/g, '')
     .replace(/\s{2,}/g, ' ')
     .replace(/\s+(#)/g, ' $1')
@@ -863,7 +893,7 @@ async function generateMatchMetadata(match) {
       const model = genAI.getGenerativeModel({
         model: modelName,
         generationConfig: {
-          temperature: 1.15,
+          temperature: 1.25,
           topP: 0.95,
           responseMimeType: 'application/json',
         },
@@ -966,12 +996,111 @@ app.get('/api/config', (_req, res) => {
     tiktokClientConfigured: tiktok.clientConfigured(),
     xClientConfigured: xPlatform.clientConfigured(),
     geminiConfigured: Boolean(process.env.GEMINI_API_KEY),
+    geminiModel: sanitizeGeminiModel(process.env.GEMINI_MODEL || 'gemini-flash-latest'),
     saveLocalCopy: process.env.SAVE_LOCAL_COPY !== 'false',
     privacyStatus: process.env.YOUTUBE_PRIVACY_STATUS || 'unlisted',
     scheduleMinutes,
     scheduleEnabled: scheduleMinutes > 0,
     musicTracks: listMusicFiles(),
   });
+});
+
+let geminiProbeCache = { at: 0, result: null };
+
+async function probeGeminiStatus({ force = false } = {}) {
+  const modelPreferred = sanitizeGeminiModel(process.env.GEMINI_MODEL || 'gemini-flash-latest');
+  const base = {
+    ok: false,
+    configured: Boolean(process.env.GEMINI_API_KEY),
+    model: modelPreferred,
+    error: null,
+    message: null,
+    checkedAt: new Date().toISOString(),
+  };
+
+  if (!base.configured) {
+    base.error = 'GEMINI_API_KEY not set';
+    base.message = 'AI titles off — using local viral templates';
+    return base;
+  }
+
+  const now = Date.now();
+  if (!force && geminiProbeCache.result && now - geminiProbeCache.at < 5 * 60 * 1000) {
+    return { ...geminiProbeCache.result, cached: true };
+  }
+
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const candidates = [
+    modelPreferred,
+    'gemini-flash-latest',
+    'gemini-flash-lite-latest',
+    'gemini-2.5-flash',
+  ].filter((name, i, arr) => name && arr.indexOf(name) === i);
+
+  let lastErr = null;
+  for (const modelName of candidates) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        generationConfig: {
+          temperature: 0,
+          maxOutputTokens: 32,
+          responseMimeType: 'application/json',
+        },
+      });
+      const result = await model.generateContent(
+        'Reply with only JSON: {"ok":true}'
+      );
+      const text = String(result.response.text() || '');
+      if (!/ok/i.test(text)) {
+        throw new Error('Unexpected Gemini probe response');
+      }
+      const okResult = {
+        ok: true,
+        configured: true,
+        model: modelName,
+        error: null,
+        message: `AI titles working (${modelName})`,
+        checkedAt: new Date().toISOString(),
+        cached: false,
+      };
+      geminiProbeCache = { at: Date.now(), result: okResult };
+      return okResult;
+    } catch (err) {
+      lastErr = err;
+      console.warn(
+        `Gemini probe ${modelName} failed:`,
+        err.message.split('\n')[0].slice(0, 160)
+      );
+    }
+  }
+
+  const failResult = {
+    ok: false,
+    configured: true,
+    model: modelPreferred,
+    error: (lastErr?.message || 'Gemini probe failed').split('\n')[0].slice(0, 180),
+    message: 'AI titles failing — local templates will be used',
+    checkedAt: new Date().toISOString(),
+    cached: false,
+  };
+  geminiProbeCache = { at: Date.now(), result: failResult };
+  return failResult;
+}
+
+app.get('/api/gemini-status', async (req, res) => {
+  try {
+    const force = req.query.refresh === '1' || req.query.refresh === 'true';
+    const status = await probeGeminiStatus({ force });
+    res.json(status);
+  } catch (err) {
+    res.status(500).json({
+      ok: false,
+      configured: Boolean(process.env.GEMINI_API_KEY),
+      error: err.message,
+      message: 'AI titles failing — local templates will be used',
+    });
+  }
 });
 
 app.get('/api/youtube-status', async (_req, res) => {

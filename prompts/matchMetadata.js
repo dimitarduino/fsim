@@ -10,51 +10,60 @@ function buildMatchMetadataPrompt(match, { uniquenessSeed } = {}) {
   const s2 = String(match.score2 ?? '0');
   const seed = uniquenessSeed || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-  return `You are a creative football social-media copywriter for YouTube Shorts, TikTok, and X.
+  return `You write VIRAL football Shorts / TikTok / Reels copy that stops the scroll.
 
-Write UNIQUE metadata for one short vertical neon football simulation clip.
-Never reuse generic filler like "football fans need to see this", "football fans only", "pure chaos", or "watch till the end".
+Goal: max watch time, comments, shares, and saves. Sound like a top sports creator — not a bot, not a press release.
 
-Match context:
-- Team A: ${t1}
-- Team B: ${t2}
-- Final score (SPOILER — only allowed late in description): ${t1} ${s1}-${s2} ${t2}
-- Uniqueness seed (make this wording different every time): ${seed}
-- Vibe: neon pitch, arcade / simulation energy, viral sports edit
+Match:
+- Home/Team A: ${t1}
+- Away/Team B: ${t2}
+- Final score (SPOILER — description only, never title/caption): ${t1} ${s1}-${s2} ${t2}
+- Seed (force unique wording every time): ${seed}
+- Visual: neon arcade football simulation, vertical short
 
-Creativity rules:
-- Invent a fresh angle each time (rivalry tease, "don't blink", plot twist ending, neon chaos, underdog energy, last-second drama, cinematic hype, meme-y football banter, etc.)
-- Title, caption, and description must feel different from each other, not copy-pasted
-- Include BOTH team names in the title
-- NEVER put the score or result in title or caption
-- Avoid repeating the same phrase across outputs
+VIRAL CRAFT (use these techniques):
+- Open loops / curiosity gaps ("wait for…", "the part nobody expects…", "this ending…")
+- Pattern interrupt in the first 3–6 words
+- Emotion: shock, rivalry, unfair, clutch, chaos, "I can't believe…"
+- Specificity > vague hype (name both teams; tease a moment, not the score)
+- Comment bait (soft): "who wins this rivalry?", "team A or team B?", "unfair or genius?"
+- Never use banned fluff: "football fans need to see this", "football fans only", "pure chaos", "watch till the end", "you won't believe", "insane", "epic", "must watch", "viral video", "link in bio"
 
-Field rules:
-1) title (YouTube Shorts)
-   - Max 90 characters
-   - Curiosity hook + both team names
-   - Include 2–4 hashtags at the end (e.g. #Football #Soccer #Shorts #FootballFans)
+TITLE (YouTube Shorts) — this is 70% of the click:
+- Max 90 characters TOTAL including hashtags
+- Structure: HOOK + ${t1} vs ${t2} + 2–3 hashtags
+- Hook styles to rotate (pick ONE fresh angle for this seed):
+  * unfinished sentence / cliffhanger
+  * "POV:" / "Tell me why…" / "This ${t1}–${t2} clip…"
+  * rivalry roast / banter
+  * "0:12 changes everything" style tease WITHOUT saying the score
+  * "I showed this to a ${t1} fan…"
+- MUST include both team names
+- NEVER include score / result / "wins" / "beats"
+- Hashtags at the end only: prefer #Football #Shorts #Soccer (max 3)
 
-2) description (YouTube)
-   - 3–5 short lines
-   - Hook first, no spoiler in line 1
-   - Mention final score only after the hook: ${t1} ${s1}-${s2} ${t2}
-   - End with 12–18 hashtags mixing broad football terms + team names
+DESCRIPTION (YouTube) — built to convert:
+- 5–8 short lines, mobile-first
+- Line 1: hook with ZERO spoiler
+- Lines 2–3: tension / what to look for (still no score)
+- Then: Final: ${t1} ${s1}-${s2} ${t2}
+- Then 1 line of soft CTA (comment / duel which club)
+- End with 14–20 hashtags: mix #Football #Soccer #Shorts #FootballTikTok #Matchday + #${t1.replace(/\s+/g, '')} #${t2.replace(/\s+/g, '')} + related
 
-3) caption (TikTok / X)
-   - Max 220 characters including hashtags
-   - Punchy, no spoilers
-   - 4–8 hashtags
+CAPTION (TikTok / X) — native & punchy:
+- Max 200 characters including hashtags
+- Feels like a real TikTok caption (not a YouTube title paste)
+- No spoilers / no score
+- 5–8 hashtags max
+- Include both team names somehow
 
-4) tags
-   - Array of 10–14 SEO keywords WITHOUT #
-   - Mix: football, soccer, shorts, highlights, sports, matchday, team names, related phrases
+TAGS:
+- 10–14 SEO strings WITHOUT #
+- Include: football, soccer, shorts, highlights, ${t1}, ${t2}, matchday, sports, football shorts, viral football
 
-5) category
-   - One of: Sports, Gaming, Entertainment, People & Blogs, Music, Comedy
-   - Prefer Sports unless another fits better
+CATEGORY: prefer "Sports" (or Gaming/Entertainment only if clearly better)
 
-Return ONLY valid JSON (no markdown, no commentary) with exactly these keys:
+Return ONLY valid JSON (no markdown):
 {
   "title": "string",
   "description": "string",
