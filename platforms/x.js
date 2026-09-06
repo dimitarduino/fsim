@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { saveOAuthState, takeOAuthState } = require('./oauthStore');
 
 const AUTH_URL = 'https://twitter.com/i/oauth2/authorize';
 const TOKEN_URL = 'https://api.twitter.com/2/oauth2/token';
@@ -20,10 +19,11 @@ function connected() {
 }
 
 function redirectUri(port) {
-  return (
+  const raw =
     process.env.X_REDIRECT_URI ||
-    `http://localhost:${port || process.env.PORT || 3000}/oauth/x/callback`
-  );
+    `http://localhost:${port || process.env.PORT || 3000}/oauth/x/callback`;
+  // Collapse accidental double slashes (except after https:)
+  return String(raw).trim().replace(/([^:]\/)\/+/g, '$1');
 }
 
 function basicAuthHeader() {
@@ -35,7 +35,8 @@ function getAuthUrl(port) {
   if (!clientConfigured()) {
     throw new Error('Set X_CLIENT_ID and X_CLIENT_SECRET in .env');
   }
-  const { state, codeChallenge } = saveOAuthState('x');
+  const { saveOAuthState } = require('./oauthStore');
+  const session = saveOAuthState('x');
   const scope = (
     process.env.X_SCOPES ||
     'tweet.read tweet.write users.read offline.access media.write'
@@ -45,17 +46,23 @@ function getAuthUrl(port) {
     client_id: process.env.X_CLIENT_ID,
     redirect_uri: redirectUri(port),
     scope,
-    state,
-    code_challenge: codeChallenge,
+    state: session.state,
+    code_challenge: session.codeChallenge,
     code_challenge_method: 'S256',
   });
-  return `${AUTH_URL}?${params.toString()}`;
+  return {
+    url: `${AUTH_URL}?${params.toString()}`,
+    cookieValue: session.cookieValue,
+  };
 }
 
-async function exchangeCode(code, state) {
-  const row = takeOAuthState(state);
+async function exchangeCode(code, state, cookieValue) {
+  const { takeOAuthState } = require('./oauthStore');
+  const row = takeOAuthState(state, cookieValue);
   if (!row || row.platform !== 'x') {
-    throw new Error('Invalid or expired X OAuth state. Try Connect again.');
+    throw new Error(
+      'Invalid or expired X OAuth state. Try Connect again (hard-refresh if it keeps failing).'
+    );
   }
   const body = new URLSearchParams({
     code,

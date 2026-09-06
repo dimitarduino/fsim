@@ -11,6 +11,7 @@ const tiktok = require('./platforms/tiktok');
 const xPlatform = require('./platforms/x');
 const { buildMatchMetadataPrompt } = require('./prompts/matchMetadata');
 const fixtures = require('./platforms/fixtures');
+const { oauthCookieHeader, readCookie } = require('./platforms/oauthStore');
 
 const PORT = process.env.PORT || 3000;
 const RECORDINGS_DIR = path.join(__dirname, 'recordings');
@@ -239,17 +240,39 @@ function resolveMusicPath(musicName) {
   return full;
 }
 
-function runFfmpeg(args) {
+function runFfmpeg(args, { timeoutMs = 12 * 60 * 1000, label = 'ffmpeg' } = {}) {
   return new Promise((resolve, reject) => {
     const proc = spawn('ffmpeg', args, { stdio: ['ignore', 'ignore', 'pipe'] });
     let stderr = '';
+    let lastLog = 0;
+    const timer = setTimeout(() => {
+      proc.kill('SIGKILL');
+      reject(new Error(`${label} timed out after ${Math.round(timeoutMs / 1000)}s`));
+    }, timeoutMs);
+
     proc.stderr.on('data', (chunk) => {
-      stderr += chunk.toString();
+      const text = chunk.toString();
+      stderr += text;
+      // Keep last chunk only so memory stays small
+      if (stderr.length > 8000) stderr = stderr.slice(-4000);
+      const now = Date.now();
+      if (now - lastLog > 8000) {
+        lastLog = now;
+        const time = (text.match(/time=(\d{2}:\d{2}:\d{2}\.\d+)/) || [])[1];
+        const speed = (text.match(/speed=\s*([0-9.]+x)/) || [])[1];
+        if (time || speed) {
+          console.log(`${label}: time=${time || '?'} speed=${speed || '?'}`);
+        }
+      }
     });
-    proc.on('error', (err) => reject(err));
+    proc.on('error', (err) => {
+      clearTimeout(timer);
+      reject(err);
+    });
     proc.on('close', (code) => {
+      clearTimeout(timer);
       if (code === 0) resolve();
-      else reject(new Error(`ffmpeg exited ${code}: ${stderr.slice(-800)}`));
+      else reject(new Error(`${label} exited ${code}: ${stderr.slice(-800)}`));
     });
   });
 }
@@ -280,23 +303,43 @@ function probeHasAudio(filePath) {
   });
 }
 
+/** Fast encode settings for small Fly VMs (webm → mp4). */
+function videoEncodeArgs() {
+  const preset = process.env.FFMPEG_PRESET || 'ultrafast';
+  const crf = process.env.FFMPEG_CRF || '28';
+  return [
+    '-c:v',
+    'libx264',
+    '-preset',
+    preset,
+    '-crf',
+    crf,
+    '-threads',
+    '1',
+    '-pix_fmt',
+    'yuv420p',
+  ];
+}
+
+function videoScaleFilter() {
+  const maxH = process.env.FFMPEG_MAX_HEIGHT || '1280';
+  // Shrink tall shorts for faster encode on 1-CPU Fly VMs
+  return `scale=-2:${maxH}:force_original_aspect_ratio=decrease`;
+}
+
 async function mixMusicIntoVideo(videoPath, musicPath) {
   const hasAudio = await probeHasAudio(videoPath);
   const outPath = videoPath.replace(/\.[^.]+$/, '') + '_with_music.mp4';
   const musicVol = process.env.MUSIC_VOLUME || '0.55';
   const sfxVol = process.env.SFX_VOLUME || '0.85';
+  const scale = videoScaleFilter();
 
   const commonOut = [
-    '-c:v',
-    'libx264',
-    '-preset',
-    'veryfast',
-    '-crf',
-    '23',
+    ...videoEncodeArgs(),
     '-c:a',
     'aac',
     '-b:a',
-    '192k',
+    '160k',
     '-ar',
     '48000',
     '-ac',
@@ -319,11 +362,12 @@ async function mixMusicIntoVideo(videoPath, musicPath) {
       '-i',
       musicPath,
       '-filter_complex',
-      `[0:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=${sfxVol}[sfx];` +
+      `[0:v]${scale}[vout];` +
+        `[0:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=${sfxVol}[sfx];` +
         `[1:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=${musicVol}[bg];` +
         `[sfx][bg]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[aout]`,
       '-map',
-      '0:v:0',
+      '[vout]',
       '-map',
       '[aout]',
       ...commonOut,
@@ -338,17 +382,20 @@ async function mixMusicIntoVideo(videoPath, musicPath) {
       '-i',
       musicPath,
       '-filter_complex',
-      `[1:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=${musicVol}[aout]`,
+      `[0:v]${scale}[vout];` +
+        `[1:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,volume=${musicVol}[aout]`,
       '-map',
-      '0:v:0',
+      '[vout]',
       '-map',
       '[aout]',
       ...commonOut,
     ];
   }
 
-  console.log(`ffmpeg mix → ${path.basename(outPath)} (music=${path.basename(musicPath)}, vol=${musicVol})`);
-  await runFfmpeg(args);
+  console.log(
+    `ffmpeg mix → ${path.basename(outPath)} (music=${path.basename(musicPath)}, vol=${musicVol}, preset=${process.env.FFMPEG_PRESET || 'ultrafast'})`
+  );
+  await runFfmpeg(args, { label: 'ffmpeg-mix' });
   return outPath;
 }
 
@@ -360,22 +407,20 @@ async function convertToMp4(videoPath) {
     '-y',
     '-i',
     videoPath,
-    '-c:v',
-    'libx264',
-    '-preset',
-    'veryfast',
-    '-crf',
-    '23',
+    '-vf',
+    videoScaleFilter(),
+    ...videoEncodeArgs(),
     '-movflags',
     '+faststart',
   ];
   if (hasAudio) {
-    args.push('-c:a', 'aac', '-b:a', '192k');
+    args.push('-c:a', 'aac', '-b:a', '160k');
   } else {
     args.push('-an');
   }
   args.push(outPath);
-  await runFfmpeg(args);
+  console.log(`ffmpeg convert → ${path.basename(outPath)}`);
+  await runFfmpeg(args, { label: 'ffmpeg-convert' });
   return outPath;
 }
 
@@ -978,7 +1023,9 @@ app.post('/api/x-disconnect', (_req, res) => {
 
 app.get('/auth/tiktok', (req, res) => {
   try {
-    res.redirect(tiktok.getAuthUrl(PORT));
+    const auth = tiktok.getAuthUrl(PORT);
+    res.setHeader('Set-Cookie', oauthCookieHeader('oauth_tiktok', auth.cookieValue));
+    res.redirect(auth.url);
   } catch (err) {
     res.status(400).send(err.message);
   }
@@ -991,7 +1038,9 @@ app.get('/oauth/tiktok/callback', async (req, res) => {
       return res.status(400).send(`TikTok OAuth error: ${error} ${errDesc || ''}`);
     }
     if (!code || !state) return res.status(400).send('Missing code/state');
-    const tokens = await tiktok.exchangeCode(String(code), String(state));
+    const cookieVal = readCookie(req, 'oauth_tiktok');
+    const tokens = await tiktok.exchangeCode(String(code), String(state), cookieVal);
+    res.setHeader('Set-Cookie', oauthCookieHeader('oauth_tiktok', '', { clear: true }));
     if (tokens.refresh_token) updateEnvVar('TIKTOK_REFRESH_TOKEN', tokens.refresh_token);
     if (tokens.access_token) updateEnvVar('TIKTOK_ACCESS_TOKEN', tokens.access_token);
     let name = null;
@@ -1004,7 +1053,7 @@ app.get('/oauth/tiktok/callback', async (req, res) => {
     res.send(`
       <html><body style="font-family:sans-serif;max-width:640px;margin:40px auto;padding:20px;background:#0a111a;color:#fff;">
         <h1>TikTok connected${name ? `: ${name}` : ''}</h1>
-        <p>Tokens saved to <code>.env</code>.</p>
+        <p>Tokens saved for this server process. On Fly, also run <code>fly secrets set TIKTOK_REFRESH_TOKEN=...</code> if deploys wipe them.</p>
         <p><a href="/" style="color:#00f3ff;">← Back to simulator</a></p>
       </body></html>
     `);
@@ -1015,7 +1064,9 @@ app.get('/oauth/tiktok/callback', async (req, res) => {
 
 app.get('/auth/x', (req, res) => {
   try {
-    res.redirect(xPlatform.getAuthUrl(PORT));
+    const auth = xPlatform.getAuthUrl(PORT);
+    res.setHeader('Set-Cookie', oauthCookieHeader('oauth_x', auth.cookieValue));
+    res.redirect(auth.url);
   } catch (err) {
     res.status(400).send(err.message);
   }
@@ -1028,7 +1079,9 @@ app.get('/oauth/x/callback', async (req, res) => {
       return res.status(400).send(`X OAuth error: ${error} ${errDesc || ''}`);
     }
     if (!code || !state) return res.status(400).send('Missing code/state');
-    const tokens = await xPlatform.exchangeCode(String(code), String(state));
+    const cookieVal = readCookie(req, 'oauth_x');
+    const tokens = await xPlatform.exchangeCode(String(code), String(state), cookieVal);
+    res.setHeader('Set-Cookie', oauthCookieHeader('oauth_x', '', { clear: true }));
     if (tokens.refresh_token) updateEnvVar('X_REFRESH_TOKEN', tokens.refresh_token);
     if (tokens.access_token) updateEnvVar('X_ACCESS_TOKEN', tokens.access_token);
     let handle = null;
@@ -1041,7 +1094,7 @@ app.get('/oauth/x/callback', async (req, res) => {
     res.send(`
       <html><body style="font-family:sans-serif;max-width:640px;margin:40px auto;padding:20px;background:#0a111a;color:#fff;">
         <h1>X connected${handle ? `: ${handle}` : ''}</h1>
-        <p>Tokens saved to <code>.env</code>.</p>
+        <p>Tokens saved for this server process.</p>
         <p><a href="/" style="color:#00f3ff;">← Back to simulator</a></p>
       </body></html>
     `);

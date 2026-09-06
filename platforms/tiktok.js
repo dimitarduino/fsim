@@ -29,17 +29,17 @@ function connected() {
 }
 
 function redirectUri(port) {
-  return (
+  const raw =
     process.env.TIKTOK_REDIRECT_URI ||
-    `http://localhost:${port || process.env.PORT || 3000}/oauth/tiktok/callback`
-  );
+    `http://localhost:${port || process.env.PORT || 3000}/oauth/tiktok/callback`;
+  return String(raw).trim().replace(/([^:]\/)\/+/g, '$1');
 }
 
 function getAuthUrl(port) {
   if (!clientConfigured()) {
     throw new Error('Set TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET in .env');
   }
-  const { state, codeChallenge } = saveOAuthState('tiktok');
+  const session = saveOAuthState('tiktok');
   const scopes = (
     process.env.TIKTOK_SCOPES ||
     'user.info.basic,video.upload,video.publish'
@@ -49,15 +49,18 @@ function getAuthUrl(port) {
     response_type: 'code',
     scope: scopes,
     redirect_uri: redirectUri(port),
-    state,
-    code_challenge: codeChallenge,
+    state: session.state,
+    code_challenge: session.codeChallenge,
     code_challenge_method: 'S256',
   });
-  return `${AUTH_URL}?${params.toString()}`;
+  return {
+    url: `${AUTH_URL}?${params.toString()}`,
+    cookieValue: session.cookieValue,
+  };
 }
 
-async function exchangeCode(code, state) {
-  const row = takeOAuthState(state);
+async function exchangeCode(code, state, cookieValue) {
+  const row = takeOAuthState(state, cookieValue);
   if (!row || row.platform !== 'tiktok') {
     throw new Error('Invalid or expired TikTok OAuth state. Try Connect again.');
   }

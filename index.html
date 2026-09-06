@@ -2444,8 +2444,8 @@
     const mixing = musicName && musicName !== 'none';
     setUploadStatus(
       mixing
-        ? `Mixing “${musicName}” into MP4…`
-        : 'Converting to MP4…'
+        ? `Encoding MP4 + mixing “${musicName}” (can take 1–3 min on free hosting)…`
+        : 'Encoding MP4 (can take 1–3 min on free hosting)…'
     );
     const form = new FormData();
     form.append('video', blob, `ucl_match_${Date.now()}.webm`);

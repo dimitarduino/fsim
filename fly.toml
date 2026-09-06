@@ -1,5 +1,7 @@
-# Fly.io app config — after `fly launch`, confirm app name/region match your account.
-# Docs: https://fly.io/docs/reference/configuration/
+# fly.toml app configuration file generated for fb-dimnai on 2026-09-06T15:47:48+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = 'fb-dimnai'
 primary_region = 'fra'
@@ -10,13 +12,17 @@ primary_region = 'fra'
   NODE_ENV = 'production'
   PORT = '3000'
   SAVE_LOCAL_COPY = 'true'
+  FFMPEG_PRESET = 'ultrafast'
+  FFMPEG_CRF = '28'
+  FFMPEG_MAX_HEIGHT = '1280'
 
 [http_service]
   internal_port = 3000
   force_https = true
-  auto_stop_machines = 'stop'
+  # One machine — avoids OAuth PKCE / in-memory token split across instances
+  auto_stop_machines = 'off'
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ['app']
 
   [http_service.concurrency]
@@ -24,14 +30,12 @@ primary_region = 'fra'
     hard_limit = 25
     soft_limit = 20
 
+  # Long upload + ffmpeg mix (webm→mp4)
+  [http_service.http_options]
+    idle_timeout = 900
+
 [[vm]]
-  memory = '1gb'
+  memory = '2gb'
   cpu_kind = 'shared'
   cpus = 1
-
-# Persist generated MP4s across deploys:
-#   fly volumes create recordings_data --size 3 --region fra
-# Then uncomment:
-# [[mounts]]
-#   source = 'recordings_data'
-#   destination = '/app/recordings'
+  memory_mb = 2048
