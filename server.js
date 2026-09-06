@@ -10,6 +10,10 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const tiktok = require('./platforms/tiktok');
 const xPlatform = require('./platforms/x');
 const { buildMatchMetadataPrompt } = require('./prompts/matchMetadata');
+const {
+  resolveLeagueContext,
+  mergeLeagueIntoMetadata,
+} = require('./prompts/leagueHashtags');
 const fixtures = require('./platforms/fixtures');
 const { oauthCookieHeader, readCookie } = require('./platforms/oauthStore');
 
@@ -712,57 +716,60 @@ function creativeFallbackMetadata(match) {
   const t2 = String(match.team2Name || match.team2 || 'T2');
   const t1Tag = t1.replace(/\s+/g, '');
   const t2Tag = t2.replace(/\s+/g, '');
+  const league = resolveLeagueContext(match);
+  const leagueTag = league.hashtags?.[0] || '#Football';
+  const leagueHashBlock = (league.hashtags || []).join(' ');
   const seed = hashSeed(t1, t2, match.score1, match.score2, Date.now(), Math.random());
 
   const titles = [
-    `Wait for the last bounce… ${t1} vs ${t2} #Football #Shorts`,
-    `POV: ${t1} and ${t2} forgot defense exists #Soccer #Shorts`,
-    `Tell me this ${t1} vs ${t2} ending is fair 😭 #Football #Shorts`,
-    `I showed a ${t1} fan this ${t2} clip… #Football #Soccer`,
-    `${t1} vs ${t2} — pause at 0:08 and you'll see it #Shorts #Football`,
-    `This ${t1}–${t2} rivalry clip hits different #Football #Shorts`,
-    `Not the ${t1} vs ${t2} plot twist I expected #Soccer #Shorts`,
-    `Neon pitch. Zero chill. ${t1} vs ${t2} #Football #Shorts`,
-    `Who actually survives this ${t1} vs ${t2} chaos? #Football #Shorts`,
-    `${t1} vs ${t2}: the bounce that broke the timeline #Soccer #Shorts`,
-    `Comment ${t1} or ${t2} before it ends 👀 #Football #Shorts`,
-    `This is why ${t1} vs ${t2} never sleeps #Football #Shorts`,
-    `Unfair? Genius? ${t1} vs ${t2} decide #Soccer #Football`,
-    `One rebound. Entire ${t1} vs ${t2} mood shift #Football #Shorts`,
-    `Scroll slower — ${t1} vs ${t2} goes feral #Football #Shorts`,
+    `AI prediction: ${t1} vs ${t2} — wait for the bounce ${leagueTag} #Shorts`,
+    `Football prediction: ${t1} vs ${t2} forgot defense ${leagueTag} #Shorts`,
+    `AI predicts this ${t1} vs ${t2} ending… fair? 😭 ${leagueTag}`,
+    `I ran an AI prediction on ${t1} vs ${t2}… ${leagueTag} #Prediction`,
+    `${t1} vs ${t2} AI prediction — pause at 0:08 ${leagueTag} #Shorts`,
+    `Match prediction: ${t1}–${t2} hits different ${leagueTag} #Shorts`,
+    `AI prediction plot twist: ${t1} vs ${t2} ${leagueTag} #Shorts`,
+    `Neon AI prediction. ${t1} vs ${t2}. Zero chill ${leagueTag}`,
+    `Who survives this ${t1} vs ${t2} AI prediction? ${leagueTag}`,
+    `${t1} vs ${t2} prediction: the bounce that broke it ${leagueTag}`,
+    `AI predicts ${t1} vs ${t2} — comment before it ends ${leagueTag}`,
+    `Football AI prediction: ${t1} vs ${t2} never sleeps ${leagueTag}`,
+    `Prediction check: unfair or genius? ${t1} vs ${t2} ${leagueTag}`,
+    `AI sim prediction — one rebound flips ${t1} vs ${t2} ${leagueTag}`,
+    `Scroll for this ${t1} vs ${t2} AI prediction ${leagueTag} #Shorts`,
   ];
 
   const captions = [
-    `${t1} vs ${t2} and the ending is rude 😭 who you got? #Football #Soccer #Shorts #${t1Tag} #${t2Tag}`,
-    `Neon football dopamine. ${t1} ⚔️ ${t2}. Stay for the bounce. #Football #Shorts #Matchday`,
-    `Tell me ${t1} vs ${t2} isn't personal. I'll wait. #Soccer #FootballTikTok #${t1Tag}`,
-    `POV: your feed finally gives you ${t1} vs ${t2} chaos. #Football #Soccer #Shorts`,
-    `${t1} vs ${t2} — comment the winner before it flips. #FootballFans #Shorts #${t2Tag}`,
-    `This ${t1}–${t2} clip is illegal for the heart rate. #Football #Soccer #Highlights`,
-    `Arcade energy only. ${t1} vs ${t2}. Save if you felt that. #Football #Shorts #Sports`,
-    `Rivalry speedrun: ${t1} vs ${t2}. No commentary needed. #Soccer #Football #Shorts`,
+    `AI prediction: ${t1} vs ${t2} ending is rude 😭 who you got? ${leagueHashBlock} #Prediction #${t1Tag}`,
+    `Football prediction dopamine. ${t1} ⚔️ ${t2}. Stay for the bounce. ${leagueTag} #AIPrediction`,
+    `AI predicts ${t1} vs ${t2} — tell me this isn't personal. ${leagueTag} #Prediction`,
+    `POV: your feed finally drops a ${t1} vs ${t2} AI prediction. ${leagueTag} #Shorts`,
+    `Match prediction: ${t1} vs ${t2} — comment before it flips. ${leagueTag} #AIPrediction`,
+    `This ${t1}–${t2} AI prediction is illegal for the heart rate. ${leagueTag} #Prediction`,
+    `Arcade AI prediction only. ${t1} vs ${t2}. Save if you felt that. ${leagueTag} #Shorts`,
+    `Prediction speedrun: ${t1} vs ${t2}. Agree with the AI? ${leagueTag} #AIPrediction`,
   ];
 
   const descHooks = [
-    `${t1} vs ${t2} on a neon pitch — and the decisive moment sneaks up on you.`,
-    `If you love chaotic matchday energy, this ${t1} vs ${t2} short is your dopamine hit.`,
-    `No boring build-up. Just ${t1}, ${t2}, and a glowing pitch that refuses to chill.`,
-    `This ${t1} vs ${t2} simulation feels like a fever-dream highlight reel made for Shorts.`,
-    `Rivalry brain activated: ${t1} vs ${t2} in under a minute of pure scroll-stop football.`,
+    `AI prediction (${league.name}): ${t1} vs ${t2} on a neon pitch — decisive moment incoming.`,
+    `Football prediction energy: this ${t1} vs ${t2} ${league.name} AI sim is Shorts dopamine.`,
+    `No boring build-up. Just an AI prediction of ${t1} vs ${t2} for ${league.name}.`,
+    `This ${t1} vs ${t2} AI prediction feels like a fever-dream ${league.name} short.`,
+    `Rivalry brain + AI prediction: ${t1} vs ${t2} (${league.name}) in under a minute.`,
   ];
 
   const midLines = [
-    `Watch the rebounds — that's where the whole mood flips.`,
-    `Don't skip: the last exchange is the whole point.`,
-    `It's arcade football, but the tension is weirdly real.`,
-    `Built for people who yell at their phone during matchday.`,
+    `It's an AI football prediction sim — watch the rebounds where the mood flips.`,
+    `Don't skip: the last exchange is the whole prediction.`,
+    `Arcade football prediction, but the tension is weirdly real.`,
+    `Built for people who argue about match predictions at 2am.`,
   ];
 
   const ctas = [
-    `Drop ${t1} or ${t2} in the comments — no fence-sitting.`,
-    `Be honest: which club are you defending after this?`,
-    `Tag a friend who supports the wrong side of this rivalry.`,
-    `Like if your heart rate went up for no reason.`,
+    `Drop ${t1} or ${t2} — do you agree with this AI prediction?`,
+    `Be honest: which club are you defending after this prediction?`,
+    `Tag a friend who would hate this match prediction.`,
+    `Like if this AI prediction raised your heart rate.`,
   ];
 
   const title = pickOne(titles, seed);
@@ -778,20 +785,22 @@ function creativeFallbackMetadata(match) {
     '',
     cta,
     '',
-    `#Football #Soccer #Shorts #FootballShorts #SoccerShorts #FootballTikTok #SoccerReels #Matchday #Highlights #Sports #FootballEdit #ViralFootball #FootballFans #SoccerFans #${t1Tag} #${t2Tag} #${t1Tag}vs${t2Tag} #FootballHighlights`,
+    `${leagueHashBlock} #Football #Soccer #Shorts #Prediction #AIPrediction #FootballPrediction #MatchPrediction #FootballShorts #FootballTikTok #Matchday #Sports #${t1Tag} #${t2Tag} #${t1Tag}vs${t2Tag} #FootballAI`,
   ].join('\n');
 
   const tags = [
+    'prediction',
+    'AI prediction',
+    'football prediction',
+    'match prediction',
+    'AI predicts',
+    'football AI',
     'football',
     'soccer',
     'football shorts',
-    'soccer shorts',
-    'football highlights',
-    'viral football',
     'matchday',
     'sports',
-    'neon football',
-    'football tiktok',
+    ...(league.tags || []),
     t1,
     t2,
     match.team1,
@@ -799,15 +808,18 @@ function creativeFallbackMetadata(match) {
     `${t1} vs ${t2}`,
   ].filter(Boolean);
 
-  return {
-    title: stripScoreFromTitle(title).slice(0, 100),
-    description,
-    caption: stripScoreFromTitle(caption).slice(0, 220),
-    tags: [...new Set(tags.map(String))].slice(0, 14),
-    categoryId: '17',
-    categoryName: 'Sports',
-    source: 'fallback',
-  };
+  return mergeLeagueIntoMetadata(
+    {
+      title: stripScoreFromTitle(title).slice(0, 100),
+      description,
+      caption: stripScoreFromTitle(caption).slice(0, 220),
+      tags: [...new Set(tags.map(String))].slice(0, 16),
+      categoryId: '17',
+      categoryName: 'Sports',
+      source: 'fallback',
+    },
+    league
+  );
 }
 
 function defaultMetadata(match) {
@@ -906,21 +918,28 @@ async function generateMatchMetadata(match) {
       }
       const cat = normalizeCategory(parsed);
       const fallback = creativeFallbackMetadata(match);
-      console.log(`Gemini metadata via ${modelName}`);
-      return {
-        title: stripScoreFromTitle(String(parsed.title || fallback.title)).slice(0, 100),
-        description: String(parsed.description || fallback.description),
-        caption: stripScoreFromTitle(
-          String(parsed.caption || fallback.caption || parsed.title || fallback.title)
-        ).slice(0, 500),
-        tags: Array.isArray(parsed.tags)
-          ? parsed.tags.map(String).slice(0, 14)
-          : fallback.tags,
-        categoryId: cat.categoryId,
-        categoryName: cat.categoryName,
-        source: 'gemini',
-        model: modelName,
-      };
+      const league = resolveLeagueContext(match);
+      console.log(`Gemini metadata via ${modelName} · league ${league.key}`);
+      const merged = mergeLeagueIntoMetadata(
+        {
+          title: stripScoreFromTitle(String(parsed.title || fallback.title)).slice(0, 100),
+          description: String(parsed.description || fallback.description),
+          caption: stripScoreFromTitle(
+            String(parsed.caption || fallback.caption || parsed.title || fallback.title)
+          ).slice(0, 500),
+          tags: Array.isArray(parsed.tags)
+            ? parsed.tags.map(String).slice(0, 16)
+            : fallback.tags,
+          categoryId: cat.categoryId,
+          categoryName: cat.categoryName,
+          source: 'gemini',
+          model: modelName,
+        },
+        league
+      );
+      merged.title = String(merged.title || '').slice(0, 100);
+      merged.caption = String(merged.caption || '').slice(0, 500);
+      return merged;
     } catch (err) {
       lastErr = err;
       console.warn(`Gemini model ${modelName} failed:`, err.message.split('\n')[0].slice(0, 180));
@@ -1316,6 +1335,10 @@ app.post('/api/upload-match', upload.single('video'), async (req, res) => {
     team2Name: req.body.team2Name || req.body.team2 || 'T2',
     score1: String(req.body.score1 ?? '0'),
     score2: String(req.body.score2 ?? '0'),
+    league: req.body.league || req.body.competition || '',
+    leagueName: req.body.leagueName || '',
+    team1League: req.body.team1League || '',
+    team2League: req.body.team2League || '',
   };
   const skipYoutube = req.body.skipYoutube === 'true' || req.body.skipYoutube === '1';
   const publishYoutube =
