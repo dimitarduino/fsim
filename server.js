@@ -244,9 +244,32 @@ function resolveMusicPath(musicName) {
   return full;
 }
 
+function resolveMediaBin(name) {
+  const envKey = name === 'ffprobe' ? 'FFPROBE_PATH' : 'FFMPEG_PATH';
+  const fromEnv = process.env[envKey] && String(process.env[envKey]).trim();
+  if (fromEnv && fs.existsSync(fromEnv)) return fromEnv;
+  const local = path.join(__dirname, 'bin', name);
+  if (fs.existsSync(local)) return local;
+  return name;
+}
+
+const FFMPEG_BIN = resolveMediaBin('ffmpeg');
+const FFPROBE_BIN = resolveMediaBin('ffprobe');
+
+function ffmpegAvailable() {
+  if (FFMPEG_BIN !== 'ffmpeg' && fs.existsSync(FFMPEG_BIN)) return true;
+  try {
+    const { execFileSync } = require('child_process');
+    execFileSync(FFMPEG_BIN, ['-version'], { stdio: 'ignore', timeout: 5000 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function runFfmpeg(args, { timeoutMs = 12 * 60 * 1000, label = 'ffmpeg' } = {}) {
   return new Promise((resolve, reject) => {
-    const proc = spawn('ffmpeg', args, { stdio: ['ignore', 'ignore', 'pipe'] });
+    const proc = spawn(FFMPEG_BIN, args, { stdio: ['ignore', 'ignore', 'pipe'] });
     let stderr = '';
     let lastLog = 0;
     const timer = setTimeout(() => {
@@ -271,6 +294,14 @@ function runFfmpeg(args, { timeoutMs = 12 * 60 * 1000, label = 'ffmpeg' } = {}) 
     });
     proc.on('error', (err) => {
       clearTimeout(timer);
+      if (err && err.code === 'ENOENT') {
+        reject(
+          new Error(
+            'ffmpeg not found on server. Install it (sudo apt install ffmpeg) or set FFMPEG_PATH.'
+          )
+        );
+        return;
+      }
       reject(err);
     });
     proc.on('close', (code) => {
@@ -284,7 +315,7 @@ function runFfmpeg(args, { timeoutMs = 12 * 60 * 1000, label = 'ffmpeg' } = {}) 
 function probeHasAudio(filePath) {
   return new Promise((resolve) => {
     const proc = spawn(
-      'ffprobe',
+      FFPROBE_BIN,
       [
         '-v',
         'error',
@@ -1016,6 +1047,7 @@ app.get('/api/config', (_req, res) => {
     xClientConfigured: xPlatform.clientConfigured(),
     geminiConfigured: Boolean(process.env.GEMINI_API_KEY),
     geminiModel: sanitizeGeminiModel(process.env.GEMINI_MODEL || 'gemini-flash-latest'),
+    ffmpegAvailable: ffmpegAvailable(),
     saveLocalCopy: process.env.SAVE_LOCAL_COPY !== 'false',
     privacyStatus: process.env.YOUTUBE_PRIVACY_STATUS || 'unlisted',
     scheduleMinutes,
@@ -1355,6 +1387,15 @@ app.post('/api/upload-match', upload.single('video'), async (req, res) => {
   let finalMp4 = null;
 
   try {
+    if (!ffmpegAvailable()) {
+      return res.status(503).json({
+        ok: false,
+        error:
+          'ffmpeg is not installed on the server — cannot encode MP4 / mix music. Run: sudo apt install ffmpeg',
+        savedPath: path.basename(req.file.path),
+      });
+    }
+
     const musicPath = resolveMusicPath(req.body.music);
     console.log(`Upload music field: "${req.body.music}" → ${musicPath || 'none'}`);
     if (musicPath) {
@@ -1367,6 +1408,14 @@ app.post('/api/upload-match', upload.single('video'), async (req, res) => {
     filePath = finalMp4;
 
     const metadata = await generateMatchMetadata(match);
+
+    // Persist into History as soon as MP4 exists (before slow social uploads)
+    upsertHistoryEntry({
+      filename: path.basename(filePath),
+      match,
+      music: musicPath ? path.basename(musicPath) : null,
+      metadata,
+    });
 
     if (publishYoutube && process.env.REQUIRE_YOUTUBE === 'true' && !youtubeConfigured()) {
       return res.status(503).json({

@@ -2521,6 +2521,7 @@
       }
 
       renderUploadResult(data);
+      loadHistory().catch(() => {});
     } catch (err) {
       console.warn('Server upload failed:', err);
       setUploadStatus(
@@ -3165,13 +3166,20 @@
         : gem?.configured
           ? 'Gemini ✗'
           : 'Gemini off';
+      const ffmpegBit = serverConfig.ffmpegAvailable === false ? ' · ffmpeg ✗' : '';
+      if (serverConfig.ffmpegAvailable === false) {
+        setUploadStatus(
+          'Server missing ffmpeg — Generate/History MP4s will fail until you install it (sudo apt install ffmpeg).',
+          'error'
+        );
+      }
       if (yt?.ok && yt.connected) {
         serverBadgeEl.textContent = yt.channelTitle
-          ? `Server ready · YT: ${yt.channelTitle} · ${gemBit}`
-          : `Server ready · social accounts loaded · ${gemBit}`;
-        serverBadgeEl.className = 'ready';
+          ? `Server ready · YT: ${yt.channelTitle} · ${gemBit}${ffmpegBit}`
+          : `Server ready · social accounts loaded · ${gemBit}${ffmpegBit}`;
+        serverBadgeEl.className = serverConfig.ffmpegAvailable === false ? '' : 'ready';
       } else {
-        serverBadgeEl.textContent = `Server ready · connect socials · ${gemBit}`;
+        serverBadgeEl.textContent = `Server ready · connect socials · ${gemBit}${ffmpegBit}`;
         serverBadgeEl.className = '';
       }
     } catch {
